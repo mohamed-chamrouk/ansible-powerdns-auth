@@ -33,6 +33,8 @@ jobs:
         uses: kpfleming/composite-actions/image-details@v3
         with:
           base_image: python:v4-bookworm-main
+          image_registry: quay.io
+          registry_account: ${{ vars.QUAY_REPO_ACCOUNT }}
       - id: preflight
         uses: kpfleming/composite-actions/ci-preflight@v3
         with:
