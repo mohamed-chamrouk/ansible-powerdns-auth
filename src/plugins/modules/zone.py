@@ -1384,7 +1384,7 @@ def main():
     if state == "retrieve":
         if zone_info["kind"] not in ["Slave", "Consumer"]:
             module.fail_json(
-                msg=f"Retrieval can only be requested for Slave or Consumer zones, {zone_info["kind"]} provided",
+                msg=f"Retrieval can only be requested for Slave or Consumer zones, {zone_info['kind']} provided",
                 **result,
             )
 
