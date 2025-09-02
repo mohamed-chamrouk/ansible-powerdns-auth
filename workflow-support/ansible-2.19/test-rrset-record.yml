@@ -167,7 +167,7 @@
           - (d1t2_rrset | sort(attribute='address') | map(attribute='type') | list) == ['A', 'A']
           - (d1t2_rrset | sort(attribute='address') | map(attribute='ttl') | list) == [3600, 3600]
       vars:
-        d1t2_rrset: "{{ lookup('dig_local', 't2.d1.rrset-record.example.', qtype='A', flat=1, fail_on_error=false, real_empty=false) }}"
+        d1t2_rrset: "{{ lookup('dig_local', 't2.d1.rrset-record.example.', qtype='A', flat=0, fail_on_error=false, real_empty=false) }}"
 
     - name: check adding records on existing rrset in existing zone
       kpfleming.powerdns_auth.zone:
@@ -181,7 +181,7 @@
               changetype: REPLACE
               keep: true
               records:
-                - content: 172.16.0.2
+                - content: 172.16.0.3
       ignore_errors: true
       register: result
 
@@ -191,9 +191,9 @@
           - '"exception" not in result'
           - not result.failed
           - result.changed
-          - (d1t2_rrset | sort(attribute='address') | map(attribute='address') | list) == ["172.16.0.1", "172.16.0.2"]
-          - (d1t2_rrset | sort(attribute='address') | map(attribute='type') | list) == ['A', 'A']
-          - (d1t2_rrset | sort(attribute='address') | map(attribute='ttl') | list) == [3600, 3600]
+          - (d1t2_rrset | sort(attribute='address') | map(attribute='address') | list) == ["172.16.0.1", "172.16.0.2", "172.16.0.3"]
+          - (d1t2_rrset | sort(attribute='address') | map(attribute='type') | list) == ['A', 'A', '1']
+          - (d1t2_rrset | sort(attribute='address') | map(attribute='ttl') | list) == [3600, 3600, 3600]
       vars:
         d1t2_rrset: "{{ lookup('dig_local', 't2.d1.rrset-record.example.', qtype='A', flat=0, fail_on_error=false, real_empty=false) }}"
 
