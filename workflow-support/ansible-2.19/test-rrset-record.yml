@@ -341,7 +341,7 @@
           rrsets:
             - name: t3.d3.rrset-record.example.
               type: A
-              changetype: DELET
+              changetype: DELETE
       ignore_errors: true
       register: result
 
