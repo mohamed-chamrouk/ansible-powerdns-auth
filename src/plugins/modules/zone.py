@@ -1526,6 +1526,12 @@ def main():
                 if (prop_catalog := props["catalog"]) and zone_info["catalog"] != prop_catalog:
                     zone_struct["catalog"] = prop_catalog
             else:
+                unsuported_options = [opt for opt in module_args["properties"]["options"].keys() if opt not in ["rrsets", "ttl"]]
+                unused_options = [key for key in props.keys() if props[key] != None and key in unsuported_options]
+
+                if unused_options:
+                    module.warn(f"The rrsets option has been provided and the zone {module.params['name']} exists. The following options will be ignored : {unused_options}")
+
                 for prop_rrset in props["rrsets"]:
                     # Retrieving existing rrset, there can only be one
                     # that matches "name" and "type" values.
@@ -1534,13 +1540,21 @@ def main():
                     prop_rrset_changetype = prop_rrset["changetype"]
                     prop_rrset_keep = prop_rrset.pop("keep") # Keeping the option out for cleaner zone_struct on subsequent unpacking
 
-                    if prop_rrset_keep and existing_rrset != None:
+                    if not prop_rrset_keep:
+                        if prop_rrset_changetype == "REPLACE":
+                            zone_struct.setdefault("rrsets", []).append(prop_rrset)
+                        elif prop_rrset_changetype == "DELETE":
+                            if existing_rrset:
+                                zone_struct.setdefault("rrsets", []).append(prop_rrset)
+                            else:
+                                module.warn(f"No matching rrset found for name: {prop_rrset['name']} and type: {prop_rrset['type']}")
+                    else:
                         # When "keep" is present and an rrset matching the
                         # the one given is found
                         if prop_rrset["records"] == existing_rrset["records"]:
                             # Despite keep being present, if existing records and given ones match
                             # exactly the final operation is to delete the whole rrset.
-                            # If the changetype is "REPLACE" then nothing is done for the rest of the zone_struct
+                            # If the changetype is "REPLACE" then nothing is done for the rest of the rrset
                             if prop_rrset_changetype == "DELETE":
                                 # Using .setdefault to avoid creating a key on dict zone_struct
                                 # and keep the dict empty for idempotency
@@ -1563,11 +1577,6 @@ def main():
                                     "records": new_records_list,
                                     "changetype": "REPLACE"
                                 })
-                    elif prop_rrset_changetype == "REPLACE":
-                        zone_struct.setdefault("rrsets", []).append(prop_rrset)
-                    elif prop_rrset_changetype == "DELETE" and existing_rrset != None:
-                        # Only changing if there is an existing rrset to have the result be idemœpotent
-                        zone_struct.setdefault("rrsets", []).append(prop_rrset)
 
         if module.params["metadata"]:
             for updater in ZoneMetadata.updaters(
