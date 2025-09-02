@@ -49,8 +49,8 @@
             - name: t1.d2.rrset-record.example.
               type: A
               records: "{{ d2_rrset | map('dict_kv', 'content') | list }}"
-        ignore_errors: true
-        register: result_d2
+      ignore_errors: true
+      register: result_d2
 
     - name: Creating zone with multiple rrsets
       kpfleming.powerdns_auth.zone:
