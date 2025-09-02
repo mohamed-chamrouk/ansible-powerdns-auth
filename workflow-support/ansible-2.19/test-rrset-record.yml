@@ -259,8 +259,8 @@
               type: A
               changetype: REPLACE
               keep: true
-              content:
-                - 192.168.2.1
+              records:
+                - content: 192.168.2.1
       ignore_errors: true
       register: result
 
@@ -285,8 +285,37 @@
               type: A
               changetype: DELETE
               keep: true
-              content:
-                - 192.168.2.4
+              records:
+                - content: 192.168.2.4
+      ignore_errors: true
+      register: result
+
+    - ansible.builtin.assert:
+        quiet: true
+        that:
+          - '"exception" not in result'
+          - not result.failed
+          - not result.changed
+          - (d1t2_rrset | sort(attribute='address') | map(attribute='address') | list) == ["192.168.2.2", "192.168.2.3"]
+          - (d1t2_rrset | sort(attribute='address') | map(attribute='type') | list) == ['A', 'A']
+          - (d1t2_rrset | sort(attribute='address') | map(attribute='ttl') | list) == [3600, 3600]
+      vars:
+        d1t2_rrset: "{{ lookup('dig_local', 't2.d3.rrset-record.example.', qtype='A', flat=0, fail_on_error=false, real_empty=false) }}"
+
+    - name: check warning on unsuported option
+      kpfleming.powerdns_auth.zone:
+        <<: *common
+        name: d3.rrset-record.example.
+        state: present
+        properties:
+          kind: Master
+          rrsets:
+            - name: t2.d3.rrset-record.example.
+              type: A
+              changetype: REPLACE
+              keep: true
+              records:
+                - content: 192.168.2.4
       ignore_errors: true
       register: result
 
