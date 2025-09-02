@@ -315,7 +315,33 @@
               changetype: REPLACE
               keep: true
               records:
-                - content: 192.168.2.4
+                - content: 192.168.2.5
+      ignore_errors: true
+      register: result
+
+    - ansible.builtin.assert:
+        quiet: true
+        that:
+          - '"exception" not in result'
+          - not result.failed
+          - result.changed
+          - result.warnings
+          - (d1t2_rrset | sort(attribute='address') | map(attribute='address') | list) == ["192.168.2.2", "192.168.2.3", "192.168.2.5"]
+          - (d1t2_rrset | sort(attribute='address') | map(attribute='type') | list) == ['A', 'A', 'A']
+          - (d1t2_rrset | sort(attribute='address') | map(attribute='ttl') | list) == [3600, 3600, 3600]
+      vars:
+        d1t2_rrset: "{{ lookup('dig_local', 't2.d3.rrset-record.example.', qtype='A', flat=0, fail_on_error=false, real_empty=false) }}"
+
+    - name: check warning on deletion of non-existant rrset
+      kpfleming.powerdns_auth.zone:
+        <<: *common
+        name: d3.rrset-record.example.
+        state: present
+        properties:
+          rrsets:
+            - name: t3.d3.rrset-record.example.
+              type: A
+              changetype: DELET
       ignore_errors: true
       register: result
 
@@ -325,8 +351,4 @@
           - '"exception" not in result'
           - not result.failed
           - not result.changed
-          - (d1t2_rrset | sort(attribute='address') | map(attribute='address') | list) == ["192.168.2.2", "192.168.2.3"]
-          - (d1t2_rrset | sort(attribute='address') | map(attribute='type') | list) == ['A', 'A']
-          - (d1t2_rrset | sort(attribute='address') | map(attribute='ttl') | list) == [3600, 3600]
-      vars:
-        d1t2_rrset: "{{ lookup('dig_local', 't2.d3.rrset-record.example.', qtype='A', flat=0, fail_on_error=false, real_empty=false) }}"
+          - result.warnings
