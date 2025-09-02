@@ -418,7 +418,7 @@ EXAMPLES = """
           changetype: REPLACE
           records:
             - content: 192.168.0.1
-              disabled: False
+              disabled: false
             - content: 192.168.1.1
 
 - name: add record to existing rrset in existing zone
