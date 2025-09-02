@@ -135,9 +135,9 @@
           - '"exception" not in result'
           - not result.failed
           - result.changed
-          - (d1t2_rrset | sort(attribute='address') | map(attribute='address' | list) == ["10.0.01", "10.0.0.2"]
-          - (d1t2_rrset | sort(attribute='address') | map(attribute='type' | list) == ['A', 'A']
-          - (d1t2_rrset | sort(attribute='address') | map(attribute='ttl' | list) == [3600, 3600]
+          - (d1t2_rrset | sort(attribute='address') | map(attribute='address') | list) == ["10.0.01", "10.0.0.2"]
+          - (d1t2_rrset | sort(attribute='address') | map(attribute='type') | list) == ['A', 'A']
+          - (d1t2_rrset | sort(attribute='address') | map(attribute='ttl') | list) == [3600, 3600]
       vars:
         d1t2_rrset: "{{ lookup('dig_local', 't2.d1.rrset-record.example.', qtype='A', flat=0, fail_on_error=false, real_empty=false) }}"
 
