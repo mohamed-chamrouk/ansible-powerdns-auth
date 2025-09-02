@@ -29,7 +29,7 @@
           rrsets:
             - name: t1.d1.rrset-record.example.
               type: A
-              records: "{{ d1_rrset | map('dict_kv', 'content') | list }}"
+              records: "{{ d1_rrset | dict_kv('content') | list }}"
       ignore_errors: true
       register: result_d1
 
@@ -48,7 +48,7 @@
           rrsets:
             - name: t1.d2.rrset-record.example.
               type: A
-              records: "{{ d2_rrset | map('dict_kv', 'content') | list }}"
+              records: "{{ d2_rrset | dict_kv('content') | list }}"
         ignore_errors: true
         register: result_d2
 
@@ -67,10 +67,10 @@
           rrsets:
             - name: t1.d3.rrset-record.example.
               type: A
-              records: "{{ d3t1_rrset | map('dict_kv', 'content') | list }}"
+              records: "{{ d3t1_rrset | dict_kv('content') | list }}"
             - name: t2.d3.rrset-record.example.
               type: A
-              records: "{{ d3t2_rrset | map('dict_kv', 'content') | list }}"
+              records: "{{ d3t2_rrset | dict_kv('content') | list }}"
       ignore_errors: true
       register: result_d3
 
