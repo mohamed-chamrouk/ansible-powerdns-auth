@@ -197,7 +197,35 @@
       vars:
         d1t2_rrset: "{{ lookup('dig_local', 't2.d1.rrset-record.example.', qtype='A', flat=0, fail_on_error=false, real_empty=false) }}"
 
-    - name: check removing rrset from existing zone
+    - name: check deleting record from existing rrset in existing zone
+      kpfleming.powerdns_auth.zone:
+        <<: *common
+        name: d2.rrset-record.example.
+        state: present
+        properties:
+          rrsets:
+            - name: t1.d2.rrset-record.example.
+              type: A
+              changetype: DELETE
+              keep: true
+              records:
+                - content: 192.168.1.1
+      ignore_errors: true
+      register: result
+
+    - ansible.builtin.assert:
+        quiet: true
+        that:
+          - '"exception" not in result'
+          - not result.failed
+          - result.changed
+          - (d1t2_rrset | sort(attribute='address') | map(attribute='address') | list) == ["192.168.1.2", "192.168.1.3"]
+          - (d1t2_rrset | sort(attribute='address') | map(attribute='type') | list) == ['A', 'A']
+          - (d1t2_rrset | sort(attribute='address') | map(attribute='ttl') | list) == [3600, 3600]
+      vars:
+        d1t2_rrset: "{{ lookup('dig_local', 't1.d2.rrset-record.example.', qtype='A', flat=0, fail_on_error=false, real_empty=false) }}"
+
+    - name: check deleting rrset from existing zone
       kpfleming.powerdns_auth.zone:
         <<: *common
         name: d2.rrset-record.example.
@@ -219,3 +247,57 @@
           - d1t2_rrset == "NXDOMAIN"
       vars:
         d1t2_rrset: "{{ lookup('dig_local', 't1.d2.rrset-record.example.', qtype='A', flat=0, fail_on_error=false, real_empty=false) }}"
+
+    - name: check idempotent change on rrset
+      kpfleming.powerdns_auth.zone:
+        <<: *common
+        name: d3.rrset-record.example.
+        state: present
+        properties:
+          rrsets:
+            - name: t1.d3.rrset-record.example.
+              type: A
+              changetype: REPLACE
+              keep: true
+              content:
+                - 192.168.2.1
+      ignore_errors: true
+      register: result
+
+    - ansible.builtin.assert:
+        quiet: true
+        that:
+          - '"exception" not in result'
+          - not result.failed
+          - not result.changed
+          - d1t2_rrset["address"] == "192.168.2.1"
+      vars:
+        d1t2_rrset: "{{ lookup('dig_local', 't1.d3.rrset-record.example.', qtype='A', flat=0, fail_on_error=false, real_empty=false) }}"
+
+    - name: check idempotent deletion on rrset
+      kpfleming.powerdns_auth.zone:
+        <<: *common
+        name: d3.rrset-record.example.
+        state: present
+        properties:
+          rrsets:
+            - name: t2.d3.rrset-record.example.
+              type: A
+              changetype: DELETE
+              keep: true
+              content:
+                - 192.168.2.4
+      ignore_errors: true
+      register: result
+
+    - ansible.builtin.assert:
+        quiet: true
+        that:
+          - '"exception" not in result'
+          - not result.failed
+          - not result.changed
+          - (d1t2_rrset | sort(attribute='address') | map(attribute='address') | list) == ["192.168.2.2", "192.168.2.3"]
+          - (d1t2_rrset | sort(attribute='address') | map(attribute='type') | list) == ['A', 'A']
+          - (d1t2_rrset | sort(attribute='address') | map(attribute='ttl') | list) == [3600, 3600]
+      vars:
+        d1t2_rrset: "{{ lookup('dig_local', 't2.d3.rrset-record.example.', qtype='A', flat=0, fail_on_error=false, real_empty=false) }}"
