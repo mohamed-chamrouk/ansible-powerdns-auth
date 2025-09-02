@@ -101,16 +101,16 @@
         d3t2_retrieved_rrset: "{{ lookup('dig_local', 't2.d3.rrset-record.example.', qtype='A', flat=1, fail_on_error=false, real_empty=false) }}"
         d1:
           - "{{ d1_rrset }}"
-          - "{{ d1_defined_rrset }}"
+          - "{{ d1_retrieved_rrset }}"
         d2:
           - "{{ d2_rrset }}"
-          - "{{ d2_defined_rrset }}"
+          - "{{ d2_retrieved_rrset }}"
         d3t1:
           - "{{ d3t1_rrset }}"
-          - "{{ d3t1_defined_rrset }}"
+          - "{{ d3t1_retrieved_rrset }}"
         d3t2:
           - "{{ d3t2_rrset }}"
-          - "{{ d3t2_defined_rrset }}"
+          - "{{ d3t2_retrieved_rrset }}"
 
   tasks:
     - name: check adding rrset to existing zone
