@@ -172,12 +172,14 @@ options:
             required: true
           changetype:
             description:
-              - Whether to replace(/create) or delete matching rrset
+              - Whether to replace(/create) or delete matching rrset,
+                see http-api/zone of powerdns doc for more information.
             choices: ['REPLACE', 'DELETE']
             type: str
           keep:
             description:
-              - Whether or not to keep unprovided existing records when replacing or deleting
+              - When changetype is REPLACE, keeps existing records in the rrset intact
+              - When changetype is DELETE, only the provided records in the rrset will be deleted
             type: bool
             default: false
           ttl:
@@ -403,6 +405,62 @@ EXAMPLES = """
       masters:
         - '1.1.1.1'
         - '::1'
+
+- name: add rrset to existing zone
+  pdns_auth_zone:
+    name: d4.example.
+    state: present
+    api_key: 'foobar'
+    properties:
+      rrsets:
+        - name: www.d4.example.
+          type: A
+          changetype: REPLACE
+          records:
+            - content: 192.168.0.1
+              disabled: False
+            - content: 192.168.1.1
+
+- name: add record to existing rrset in existing zone
+  pdns_auth_zone:
+    name: d4.example.
+    state: present
+    api_key: 'foobar'
+    properties:
+      rrsets:
+        - name: www.d4.example.
+          type: A
+          changetype: REPLACE
+          keep: true
+          records:
+            - content: 192.168.2.1
+
+- name: remove single record from rrset in existing zone
+  pdns_auth_zone:
+    name: d4.example.
+    state: present
+    api_key: 'foobar'
+    properties:
+      rrsets:
+        - name: www.d4.example.
+          type: A
+          changetype: DELETE
+          keep: true
+          records:
+            - content: 192.168.2.1
+
+- name: remove rrset from existing zone
+  pdns_auth_zone:
+    name: d4.example.
+    state: present
+    api_key: 'foobar'
+    properties:
+      rrsets:
+        - name: www.d4.example.
+          type: A
+          changetype: DELETE
+
+
 """
 
 RETURN = """
@@ -1496,15 +1554,13 @@ def main():
 
         zone_info, result["zone"] = build_zone_result(api_zone_client, api_zone_metadata_client)
     else:
-        # compare the zone's attributes to the provided
-        # options and update it if necessary
         zone_struct = {}
 
         if module.params["properties"]:
             props = module.params["properties"]
 
             if not props["rrsets"]:
-                # If statement placed as top and not with the rest to provide
+                # "if" statement placed as top and not with the rest to provide
                 # a correct zone_struct for patchZone() even if
                 # unecessary options are provided in play properties
                 if prop_kind := props["kind"]:
@@ -1527,7 +1583,7 @@ def main():
                 unsuported_options = [
                     opt
                     for opt in module_args["properties"]["options"]
-                    if opt not in ["rrsets", "ttl"]
+                    if opt not in ["rrsets", "ttl"]  # ttl here since its always present
                 ]
                 unused_options = [
                     key for key in props if props[key] is not None and key in unsuported_options
@@ -1570,9 +1626,10 @@ def main():
                                 )
                     elif prop_rrset["records"] == existing_rrset["records"]:
                         # Despite keep being present, if existing records and given ones match
-                        # exactly the final operation is to delete the whole rrset.
-                        # If the changetype is "REPLACE"
-                        # then nothing is done for the rest of the rrset
+                        # exactly then for changetype="DELETE",
+                        # the final operation is to delete the whole rrset.
+                        # If the changetype is "REPLACE",
+                        # nothing is done for the rest of the rrset
                         if prop_rrset_changetype == "DELETE":
                             # Using .setdefault to avoid creating a key on dict zone_struct
                             # and keep the dict empty for idempotency
@@ -1587,9 +1644,9 @@ def main():
                         if prop_rrset_changetype == "REPLACE":
                             # Building a list of unique union of existing and provided records
                             new_records_list = existing_rrset["records"] + [
-                                r
-                                for r in prop_rrset["records"]
-                                if r not in existing_rrset["records"]
+                                record
+                                for record in prop_rrset["records"]
+                                if record not in existing_rrset["records"]
                             ]
                         else:
                             # Building a list of remaining records
