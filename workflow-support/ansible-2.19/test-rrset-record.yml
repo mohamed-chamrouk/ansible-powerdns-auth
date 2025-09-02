@@ -80,15 +80,10 @@
           - '"exception" not in item'
           - not item.failed
           - item.changed
-        loop:
-          - "{{ result_d1 }}"
-          - "{{ result_d2 }}"
-          - "{{ result_d3 }}"
-
-    - ansible.builtin.assert:
-        quiet: true
-        that:
-          -
+      loop:
+        - "{{ result_d1 }}"
+        - "{{ result_d2 }}"
+        - "{{ result_d3 }}"
 
     - ansible.builtin.assert:
         quiet: true
