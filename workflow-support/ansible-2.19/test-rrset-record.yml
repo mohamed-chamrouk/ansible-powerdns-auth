@@ -17,7 +17,7 @@
     - name: Creating zone with single rrset and single record
       kpfleming.powerdns_auth.zone:
         <<: *common
-        name: d1.rrset.example.
+        name: d1.rrset-record.example.
         state: present
         properties:
           kind: Native
@@ -27,7 +27,7 @@
             mname: localhost.
             rname: hostmaster.localhost.
           rrsets:
-            - name: t1.d1.rrset.example.
+            - name: t1.d1.rrset-record.example.
               type: A
               records: "{{ d1_rrset | map('community.general.dict_kv', 'content') | list }}"
       ignore_errors: true
@@ -36,7 +36,7 @@
     - name: Creating zone with single rrset and multiple records
       kpfleming.powerdns_auth.zone:
         <<: *common
-        name: d2.rrset.example.
+        name: d2.rrset-record.example.
         state: present
         properties:
           kind: Native
@@ -46,7 +46,7 @@
             mname: localhost.
             rname: hostmaster.localhost.
           rrsets:
-            - name: t1.d2.rrset.example.
+            - name: t1.d2.rrset-record.example.
               type: A
               records: "{{ d2_rrset | map('community.general.dict_kv', 'content') | list }}"
         ignore_errors: true
@@ -55,7 +55,7 @@
     - name: Creating zone with multiple rrsets
       kpfleming.powerdns_auth.zone:
         <<: *common
-        name: d3.rrset.example.
+        name: d3.rrset-record.example.
         state: present
         properties:
           kind: Native
@@ -65,10 +65,10 @@
             mname: localhost.
             rname: hostmaster.localhost.
           rrsets:
-            - name: t1.d3.rrset.example.
+            - name: t1.d3.rrset-record.example.
               type: A
               records: "{{ d3t1_rrset | map('community.general.dict_kv', 'content') | list }}"
-            - name: t2.d3.rrset.example.
+            - name: t2.d3.rrset-record.example.
               type: A
               records: "{{ d3t2_rrset | map('community.general.dict_kv', 'content') | list }}"
       ignore_errors: true
@@ -100,10 +100,10 @@
         - "{{ d3t1 }}"
         - "{{ d3t2 }}"
       vars:
-        d1_retrieved_rrset: "{{ lookup('dig_local', 't1.d1.rrset.example.', qtype='A', flat=1, fail_on_error=false, real_empty=false) }}"
-        d2_retrieved_rrset: "{{ lookup('dig_local', 't1.d2.rrset.example.', qtype='A', flat=1, fail_on_error=false, real_empty=false) }}"
-        d3t1_retrieved_rrset: "{{ lookup('dig_local', 't1.d3.rrset.example.', qtype='A', flat=1, fail_on_error=false, real_empty=false) }}"
-        d3t2_retrieved_rrset: "{{ lookup('dig_local', 't2.d3.rrset.example.', qtype='A', flat=1, fail_on_error=false, real_empty=false) }}"
+        d1_retrieved_rrset: "{{ lookup('dig_local', 't1.d1.rrset-record.example.', qtype='A', flat=1, fail_on_error=false, real_empty=false) }}"
+        d2_retrieved_rrset: "{{ lookup('dig_local', 't1.d2.rrset-record.example.', qtype='A', flat=1, fail_on_error=false, real_empty=false) }}"
+        d3t1_retrieved_rrset: "{{ lookup('dig_local', 't1.d3.rrset-record.example.', qtype='A', flat=1, fail_on_error=false, real_empty=false) }}"
+        d3t2_retrieved_rrset: "{{ lookup('dig_local', 't2.d3.rrset-record.example.', qtype='A', flat=1, fail_on_error=false, real_empty=false) }}"
         d1:
           - "{{ d1_rrset }}"
           - "{{ d1_defined_rrset }}"
@@ -121,11 +121,11 @@
     - name: check adding rrset to existing zone
       kpfleming.powerdns_auth.zone:
         <<: *common
-        name: d1.rrset.example.
+        name: d1.rrset-record.example.
         state: present
         properties:
           rrsets:
-            - name: t2.d1.rrset.example.
+            - name: t2.d1.rrset-record.example.
               type: A
               changetype: REPLACE
               records:
@@ -144,16 +144,16 @@
           - (d1t2_rrset | sort(attribute='address') | map(attribute='type' | list) == ['A', 'A']
           - (d1t2_rrset | sort(attribute='address') | map(attribute='ttl' | list) == [3600, 3600]
       vars:
-        d1t2_rrset: "{{ lookup('dig_local', 't2.d1.rrset.example.', qtype='A', flat=0, fail_on_error=false, real_empty=false) }}"
+        d1t2_rrset: "{{ lookup('dig_local', 't2.d1.rrset-record.example.', qtype='A', flat=0, fail_on_error=false, real_empty=false) }}"
 
     - name: check replacing records on existing rrset in existing zone
       kpfleming.powerdns_auth.zone:
         <<: *common
-        name: d1.rrset.example.
+        name: d1.rrset-record.example.
         state: present
         properties:
           rrsets:
-            - name: t2.d1.rrset.example.
+            - name: t2.d1.rrset-record.example.
               type: A
               changetype: REPLACE
               records:
@@ -171,16 +171,16 @@
           - (d1t2_rrset | sort(attribute='address') | map(attribute='type' | list) == ['A']
           - (d1t2_rrset | sort(attribute='address') | map(attribute='ttl' | list) == [3600]
       vars:
-        d1t2_rrset: "{{ lookup('dig_local', 't2.d1.rrset.example.', qtype='A', flat=0, fail_on_error=false, real_empty=false) }}"
+        d1t2_rrset: "{{ lookup('dig_local', 't2.d1.rrset-record.example.', qtype='A', flat=0, fail_on_error=false, real_empty=false) }}"
 
     - name: check adding records on existing rrset in existing zone
       kpfleming.powerdns_auth.zone:
         <<: *common
-        name: d1.rrset.example.
+        name: d1.rrset-record.example.
         state: present
         properties:
           rrsets:
-            - name: t2.d1.rrset.example.
+            - name: t2.d1.rrset-record.example.
               type: A
               changetype: REPLACE
               keep: true
@@ -199,16 +199,16 @@
           - (d1t2_rrset | sort(attribute='address') | map(attribute='type') | list) == ['A', 'A']
           - (d1t2_rrset | sort(attribute='address') | map(attribute='ttl') | list) == [3600, 3600]
       vars:
-        d1t2_rrset: "{{ lookup('dig_local', 't2.d1.rrset.example.', qtype='A', flat=0, fail_on_error=false, real_empty=false) }}"
+        d1t2_rrset: "{{ lookup('dig_local', 't2.d1.rrset-record.example.', qtype='A', flat=0, fail_on_error=false, real_empty=false) }}"
 
     - name: check removing rrset from existing zone
       kpfleming.powerdns_auth.zone:
         <<: *common
-        name: d1.rrset.example.
+        name: d1.rrset-record.example.
         state: present
         properties:
           rrsets:
-            - name: t1.d2.rrset.example.
+            - name: t1.d2.rrset-record.example.
               type: A
               changetype: DELETE
       ignore_errors: true
@@ -222,4 +222,4 @@
           - result.changed
           - d1t2_rrset == "NXDOMAIN"
       vars:
-        d1t2_rrset: "{{ lookup('dig_local', 't1.d2.rrset.example.', qtype='A', flat=0, fail_on_error=false, real_empty=false) }}"
+        d1t2_rrset: "{{ lookup('dig_local', 't1.d2.rrset-record.example.', qtype='A', flat=0, fail_on_error=false, real_empty=false) }}"
