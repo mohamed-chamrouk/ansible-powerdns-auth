@@ -26,7 +26,7 @@ validation packages used by Bravado will not accept it. In order to
 work around this problem, older versions of the validation packages
 can be installed, like this:
 
-```shell
+```bash
 pip install -r requirements.txt
 ```
 

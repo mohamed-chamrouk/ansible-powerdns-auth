@@ -459,8 +459,6 @@ EXAMPLES = """
         - name: www.d4.example.
           type: A
           changetype: DELETE
-
-
 """
 
 RETURN = """
