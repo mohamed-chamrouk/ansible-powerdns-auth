@@ -200,7 +200,7 @@
     - name: check removing rrset from existing zone
       kpfleming.powerdns_auth.zone:
         <<: *common
-        name: d1.rrset-record.example.
+        name: d2.rrset-record.example.
         state: present
         properties:
           rrsets:
