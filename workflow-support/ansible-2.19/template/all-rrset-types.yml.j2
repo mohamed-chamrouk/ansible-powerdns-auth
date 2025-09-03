@@ -1,0 +1,24 @@
+{% for rrset in rrsets %}
+{% set rrset_type = rrset.keys() | first %}
+- name: Creating rrset of type {{ rrset_type }}
+  kpfleming.powerdns_auth.rrset:
+    {% set params = {
+        "zone_name": rrset_type ~ ".rrset.example.",
+        "name": "t." ~ rrset_type ~ ".rrset.example.",
+        "state": "present",
+        "api_key": api_key
+        }
+    %}
+    {{ params | combine(rrset) }}
+  register: result
+
+- ansible.builtin.assert:
+    quiet: true
+    that:
+      - '"exception" not in result'
+      - not result.failed
+      - result.changed
+      - rrset != "NXDOMAIN"
+  vars:
+    rrset: "{{ '{{ lookup(''dig_local'', ''t.' ~ rrset_type ~ '.rrset.example.'', qtype=''' ~ rrset_type ~ ''', flat=0, fail_on_error=false, real_empty=false) }}' }}"
+{% endfor %}
