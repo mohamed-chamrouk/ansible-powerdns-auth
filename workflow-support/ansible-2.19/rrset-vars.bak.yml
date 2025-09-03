@@ -9,6 +9,11 @@ rrsets:
         disabled: false
       - address: 2001:db8::1
         disabled: false
+  - CAA:
+      - flags: 0
+        tag: issue
+        value: letsencrypt.org
+        disabled: false
   - CNAME:
       - cname: app.example.com.
         disabled: false
