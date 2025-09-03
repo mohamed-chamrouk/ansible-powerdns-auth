@@ -8,7 +8,6 @@
 
   vars:
     ansible_python_interpreter: python
-    pdns_version: "{{ lookup('ansible.builtin.env', 'pdns_version') }}"
     api_key: foo
 
   pre_tasks:
@@ -16,6 +15,9 @@
       ansible.builtin.template:
         src: ./template/all-rrset-types.yml.j2
         dest: ./test-rrset-all-types.yml
+
+    - ansible.builtin.debug:
+        msg: "the value of foo.txt is {{ lookup('ansible.builtin.file', './test-rrset-all-types.yml') }}"
 
     - name: check "Native" zone creation
       kpfleming.powerdns_auth.zone:
