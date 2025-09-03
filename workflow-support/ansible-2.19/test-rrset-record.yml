@@ -19,7 +19,7 @@
 
     - name: check "Native" zone creation
       kpfleming.powerdns_auth.zone:
-        api_key: api_key
+        api_key: "{{ api_key }}"
         name: rrset.example.
         state: present
         properties:
