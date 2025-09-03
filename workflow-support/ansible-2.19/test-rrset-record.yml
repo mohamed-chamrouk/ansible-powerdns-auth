@@ -14,7 +14,7 @@
   pre_tasks:
     - name: Creating template for all rrset types
       ansible.builtin.template:
-        src: /template/all-rrset-types.yml.j2
+        src: ./template/all-rrset-types.yml.j2
         dest: ./test-rrset-all-types.yml
 
   tasks:
