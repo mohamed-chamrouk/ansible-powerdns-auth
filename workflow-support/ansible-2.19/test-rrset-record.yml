@@ -122,8 +122,8 @@
         name: "r.{{ item.key }}.drrset.example.com."
         zone_name: "{{ item.key }}.drrset.example.com."
         state: present
-        <<: "{{ item }}"
-      loop: "{{ rrsets | dict2items }}"
+        <<: "{{ *item.value }}"
+      loop: "{{ lookup('ansible.builtin.dict', rrsets) }}"
       register: result
 
     - ansible.builtin.assert:

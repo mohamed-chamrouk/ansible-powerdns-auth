@@ -370,7 +370,7 @@ def main():
             "options": {
                 "priority": {"type": "int", "required": True},
                 "target": {"type": "str", "required": True},
-                "params": {"type": "dict", "required": False},
+                "params": {"type": "str", "required": False},
                 "disabled": {"type": "bool", "required": False, "default": False},
             },
         },
@@ -464,7 +464,7 @@ def main():
 
     # Check couldn't fit in AnsibleModule args
     type_classic = "type" in params and "records" in params
-    if params["state"] == "present" and (type_classic or rrset_record_types):
+    if params["state"] == "present" and not (type_classic or rrset_record_types):
         module.fail_json(
             "State is present but no valid record has been provided"
         )

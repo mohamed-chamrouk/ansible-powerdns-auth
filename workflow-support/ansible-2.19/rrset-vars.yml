@@ -1,44 +1,44 @@
 rrsets:
-  - A:
+  - A: &A
       - address: 192.168.1.1
         disabled: false
       - address: 192.168.1.3
         disabled: true
-  - AAAA:
+  - AAAA: &AAAA
       - address: 2001:db8:85a3::8a2e:370:7334
         disabled: false
       - address: 2001:db8::1
         disabled: false
-  - CAA:
+  - CAA: &CAA
       - flags: 0
         tag: issue
         value: letsencrypt.org
         disabled: false
-  - CNAME:
+  - CNAME: &CNAME
       - cname: app.example.com.
         disabled: false
-  - DNSKEY:
+  - DNSKEY: &DNSKEY
       - flags: 257
         protocol: 3
         algorithm: 8
         public_key: MIIBIjANBg...base64key...QAB
         disabled: false
-  - DS:
+  - DS: &DS
       - key_tag: 2371
         algorithm: 8
         digest_type: 2
         digest: 3F1C2D7A9B0E4A6F8C1D2233445566778899AABBCCDDEEFF001122334455667
         disabled: false
-  - HINFO:
+  - HINFO: &HINFO
       - cpu: "Intel Xeon"
         os: "Linux"
         disabled: false
-  - HTTPS:
+  - HTTPS: &HTTPS
       - priority: 1
         target: svc.example.com.
         params: "alpn=h2,http/1.1;port=443"
         disabled: false
-  - LOC:
+  - LOC: &LOC
       - latitude: 37.7749
         longitude: -122.4194
         altitude: 15.0
@@ -46,14 +46,14 @@ rrsets:
         horizontal_precision: 10.0
         vertical_precision: 2.0
         disabled: false
-  - MX:
+  - MX: &MX
       - preference: 10
         exchange: mail1.example.com.
         disabled: false
       - preference: 20
         exchange: mail2.example.com.
         disabled: true
-  - NAPTR:
+  - NAPTR: &NAPTR
       - order: 100
         preference: 50
         flags: "S"
@@ -61,14 +61,14 @@ rrsets:
         regexp: "!^.*$!sip:proxy.example.com!"
         replacement: .
         disabled: false
-  - NS:
+  - NS: &NS
       - host: ns1.example.com.
         disabled: false
-  - NSEC:
+  - NSEC: &NSEC
       - next_domain: next.example.com.
         type_bitmap: "A AAAA RRSIG NSEC"
         disabled: false
-  - NSEC3:
+  - NSEC3: &NSEC3
       - hash_algorithm: 1
         flags: 1
         iterations: 10
@@ -76,20 +76,20 @@ rrsets:
         next_hashed: 3P5L4Q0C7N2J8K1M
         type_bitmap: "A AAAA RRSIG NSEC3"
         disabled: false
-  - NSEC3PARAM:
+  - NSEC3PARAM: &NSEC3PARAM
       - hash_algorithm: 1
         flags: 0
         iterations: 10
         salt: A1B2C3D4
         disabled: false
-  - PTR:
+  - PTR: &PTR
       - ptrdname: host-1.example.com.
         disabled: false
-  - RP:
+  - RP: &RP
       - mbox: hostmaster.example.com.
         txt: admin-contact
         disabled: false
-  - RRSIG:
+  - RRSIG: &RRSIG
       - type_covered: "A"
         algorithm: 8
         labels: 2
@@ -100,10 +100,10 @@ rrsets:
         signer_name: example.com.
         signature: QWxhZGRpbjpvcGVuIHNlc2FtZQ==
         disabled: false
-  - SPF:
+  - SPF: &SPF
       - strings: "v=spf1 ip4:192.0.2.0/24 include:_spf.example.net ~all"
         disabled: false
-  - SOA:
+  - SOA: &SOA
       - mname: ns1.example.com.
         rname: hostmaster.example.com.
         serial: 2025090301
@@ -112,7 +112,7 @@ rrsets:
         expire: 1209600
         minimum: 3600
         disabled: false
-  - SRV:
+  - SRV: &SRV
       - priority: 10
         weight: 5
         port: 5222
@@ -123,26 +123,23 @@ rrsets:
         port: 443
         target: web.example.com.
         disabled: false
-  - SSHFP:
+  - SSHFP: &SSHFP
       - algorithm: 4
         fp_type: 2
         fingerprint: 3f1c2d7a9b0e4a6f8c1d2233445566778899aabbccddee112233445566778899
         disabled: false
-  - SVCB:
+  - SVCB: &SVCB
       - priority: 1
         target: svc.example.com.
-        params:
-          alpn: ["h2"]
-          port: 8443
-          ipv4hint: ["192.0.2.10"]
+        params: "alpn=h2 8443 ipv4hint=192.168.2.10"
         disabled: false
-  - TLSA:
+  - TLSA: &TLSA
       - usage: 3
         selector: 1
         matching_type: 1
         cert_assoc_data: 9f86d081884c7d659a2feaa0c55ad015
         disabled: false
-  - TXT:
+  - TXT: &TXT
       - strings: "v=verify1 abc123"
         disabled: false
       - strings: "project=homelab env=dev"
