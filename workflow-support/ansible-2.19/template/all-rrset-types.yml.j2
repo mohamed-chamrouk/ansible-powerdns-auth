@@ -3,7 +3,7 @@
 - name: Creating rrset of type {{ rrset_type }}
   kpfleming.powerdns_auth.rrset:
     {% set params = {
-        "zone_name": rrset_type ~ ".rrset.example.",
+        "zone_name": "rrset.example.",
         "name": "t." ~ rrset_type ~ ".rrset.example.",
         "state": "present",
         "api_key": api_key
