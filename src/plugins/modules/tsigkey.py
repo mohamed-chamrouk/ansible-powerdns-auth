@@ -210,7 +210,7 @@ def main():
         module.exit_json(**result)
 
     # create an object to proxy the raw API object
-    # and curry the server_id into all API calls
+    # and carry the server_id into all API calls
     # automatically, along with handling
     # predictable exceptions
     api_client = APITSIGKeyWrapper(module=module, result=result, object_type="tsigkey")

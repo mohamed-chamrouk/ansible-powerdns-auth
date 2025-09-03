@@ -66,6 +66,7 @@ options:
           - Zone kind.
         choices: [ 'Native', 'Master', 'Slave', 'Producer', 'Consumer' ]
         type: str
+        required: true
       account:
         description:
           - Optional string used for local policy.
@@ -154,7 +155,7 @@ options:
           - Resource Record Set.
             Only used when O(properties.kind=Native), O(properties.kind=Master),
             or O(properties.kind=Producer).
-          - Only used when zone exists or is being created (O(state=present)).
+          - Only used when zone is being created (O(state=present) and zone is not present).
           - SOA records are not permitted.
         type: list
         elements: dict
@@ -170,18 +171,6 @@ options:
               - Type of resource record (e.g. "A", "PTR", "MX").
             type: str
             required: true
-          changetype:
-            description:
-              - Whether to replace(/create) or delete matching rrset,
-                see http-api/zone of powerdns doc for more information.
-            choices: ['REPLACE', 'DELETE']
-            type: str
-          keep:
-            description:
-              - When changetype is REPLACE, keeps existing records in the rrset intact
-              - When changetype is DELETE, only the provided records in the rrset will be deleted
-            type: bool
-            default: false
           ttl:
             description:
               - TTL of the records, in seconds.
@@ -405,60 +394,6 @@ EXAMPLES = """
       masters:
         - '1.1.1.1'
         - '::1'
-
-- name: add rrset to existing zone
-  pdns_auth_zone:
-    name: d4.example.
-    state: present
-    api_key: 'foobar'
-    properties:
-      rrsets:
-        - name: www.d4.example.
-          type: A
-          changetype: REPLACE
-          records:
-            - content: 192.168.0.1
-              disabled: false
-            - content: 192.168.1.1
-
-- name: add record to existing rrset in existing zone
-  pdns_auth_zone:
-    name: d4.example.
-    state: present
-    api_key: 'foobar'
-    properties:
-      rrsets:
-        - name: www.d4.example.
-          type: A
-          changetype: REPLACE
-          keep: true
-          records:
-            - content: 192.168.2.1
-
-- name: remove single record from rrset in existing zone
-  pdns_auth_zone:
-    name: d4.example.
-    state: present
-    api_key: 'foobar'
-    properties:
-      rrsets:
-        - name: www.d4.example.
-          type: A
-          changetype: DELETE
-          keep: true
-          records:
-            - content: 192.168.2.1
-
-- name: remove rrset from existing zone
-  pdns_auth_zone:
-    name: d4.example.
-    state: present
-    api_key: 'foobar'
-    properties:
-      rrsets:
-        - name: www.d4.example.
-          type: A
-          changetype: DELETE
 """
 
 RETURN = """
@@ -653,7 +588,7 @@ class APIZoneWrapper(APIWrapper):
         return self.raw_api.listZone(
             server_id=self.server_id,
             zone_id=self.zone_id,
-            rrsets=True,
+            rrsets=False,
         ).result()
 
     @api_exception_handler
@@ -667,14 +602,6 @@ class APIZoneWrapper(APIWrapper):
     @api_exception_handler
     def putZone(self, **kwargs):  # noqa: N802
         return self.raw_api.putZone(
-            server_id=self.server_id,
-            zone_id=self.zone_id,
-            **kwargs,
-        ).result()
-
-    @api_exception_handler
-    def patchZone(self, **kwargs):  # noqa: N802
-        return self.raw_api.patchZone(
             server_id=self.server_id,
             zone_id=self.zone_id,
             **kwargs,
@@ -1159,6 +1086,7 @@ def main():
                 "kind": {
                     "type": "str",
                     "choices": ["Native", "Master", "Slave", "Producer", "Consumer"],
+                    "required": True,
                 },
                 "account": {
                     "type": "str",
@@ -1219,12 +1147,6 @@ def main():
                             "type": "str",
                             "required": True,
                         },
-                        "changetype": {
-                            "type": "str",
-                            "choices": ["REPLACE", "DELETE"],
-                            "default": "REPLACE",
-                        },
-                        "keep": {"type": "bool", "default": False},
                         "ttl": {
                             "type": "int",
                             "default": 3600,
@@ -1371,7 +1293,7 @@ def main():
     if module.check_mode:
         module.exit_json(**result)
 
-    # Create wrappers to proxy the raw API objects
+    # create wrappers to proxy the raw API objects
     # and carry the server_id and zone_id into all API
     # calls automatically, along with handling
     # predictable exceptions
@@ -1404,6 +1326,7 @@ def main():
             # state must be 'present'
             zone_id = None
     else:
+        #
         # get the full zone info and populate the result dict
         zone_id = partial_zone_info[0]["id"]
         api_zone_client.zone_id = zone_id
@@ -1437,8 +1360,7 @@ def main():
     if state == "retrieve":
         if zone_info["kind"] not in ["Slave", "Consumer"]:
             module.fail_json(
-                msg=f"Retrieval can only be requested for Slave or Consumer zones, \
-                    {zone_info['kind']} provided",
+                msg=f"Retrieval can only be requested for '{zone_info['kind']}' zones",
                 **result,
             )
 
@@ -1457,9 +1379,6 @@ def main():
             module.fail_json(msg="'properties' must be specified for zone creation", **result)
 
         props = module.params["properties"]
-
-        if not props["kind"]:
-            module.fail_json(msg="'properties -> kind' must be specified for zone creation")
 
         zone_struct["kind"] = props["kind"]
 
@@ -1552,117 +1471,29 @@ def main():
 
         zone_info, result["zone"] = build_zone_result(api_zone_client, api_zone_metadata_client)
     else:
+        # compare the zone's attributes to the provided
+        # options and update it if necessary
         zone_struct = {}
 
         if module.params["properties"]:
             props = module.params["properties"]
 
-            if not props["rrsets"]:
-                # "if" statement placed as top and not with the rest to provide
-                # a correct zone_struct for patchZone() even if
-                # unecessary options are provided in play properties
-                if prop_kind := props["kind"]:
-                    if zone_info["kind"] != prop_kind:
-                        zone_struct["kind"] = prop_kind
+            if prop_kind := props["kind"]:
+                if zone_info["kind"] != prop_kind:
+                    zone_struct["kind"] = prop_kind
 
-                    if props["kind"] in ["Slave", "Consumer"] and props["masters"]:
-                        mp_masters = sorted(props["masters"])
-                        zi_masters = sorted(zone_info["masters"])
+                if prop_kind in ["Slave", "Consumer"] and props["masters"]:
+                    mp_masters = sorted(props["masters"])
+                    zi_masters = sorted(zone_info["masters"])
 
-                        if zi_masters != mp_masters:
-                            zone_struct["masters"] = props["masters"]
+                    if zi_masters != mp_masters:
+                        zone_struct["masters"] = props["masters"]
 
-                if (prop_account := props["account"]) and zone_info["account"] != prop_account:
-                    zone_struct["account"] = prop_account
+            if (prop_account := props["account"]) and zone_info["account"] != prop_account:
+                zone_struct["account"] = prop_account
 
-                if (prop_catalog := props["catalog"]) and zone_info["catalog"] != prop_catalog:
-                    zone_struct["catalog"] = prop_catalog
-            else:
-                unsuported_options = [
-                    opt
-                    for opt in module_args["properties"]["options"]
-                    if opt not in ["rrsets", "ttl"]  # ttl here since its always present
-                ]
-                unused_options = [
-                    key for key in props if props[key] is not None and key in unsuported_options
-                ]
-
-                if unused_options:
-                    module.warn(
-                        f"The rrsets option has been provided \
-                        and the zone {module.params['name']} exists. \
-                        The following options will be ignored : {unused_options}"
-                    )
-
-                for prop_rrset in props["rrsets"]:
-                    # Retrieving existing rrset, there can only be one
-                    # that matches "name" and "type" values.
-                    existing_rrset = next(
-                        (
-                            r
-                            for r in zone_info["rrsets"]
-                            if r["name"] == prop_rrset["name"] and r["type"] == prop_rrset["type"]
-                        ),
-                        None,
-                    )
-
-                    prop_rrset_changetype = prop_rrset["changetype"]
-                    prop_rrset_keep = prop_rrset.pop(
-                        "keep"
-                    )  # Keeping the option out for cleaner zone_struct on subsequent unpacking
-
-                    if not prop_rrset_keep:
-                        if prop_rrset_changetype == "REPLACE":
-                            zone_struct.setdefault("rrsets", []).append(prop_rrset)
-                        elif prop_rrset_changetype == "DELETE":
-                            if existing_rrset:
-                                zone_struct.setdefault("rrsets", []).append(prop_rrset)
-                            else:
-                                module.warn(
-                                    f"No matching rrset found for \
-                                    name: {prop_rrset['name']} and type: {prop_rrset['type']}"
-                                )
-                    elif prop_rrset["records"] == existing_rrset["records"]:
-                        # Despite keep being present, if existing records and given ones match
-                        # exactly then for changetype="DELETE",
-                        # the final operation is to delete the whole rrset.
-                        # If the changetype is "REPLACE",
-                        # nothing is done for the rest of the rrset
-                        if prop_rrset_changetype == "DELETE":
-                            # Using .setdefault to avoid creating a key on dict zone_struct
-                            # and keep the dict empty for idempotency
-                            zone_struct.setdefault("rrsets", []).append(
-                                {
-                                    "name": prop_rrset["name"],
-                                    "type": prop_rrset["type"],
-                                    "changetype": "DELETE",
-                                }
-                            )
-                    else:
-                        if prop_rrset_changetype == "REPLACE":
-                            # Building a list of unique union of existing and provided records
-                            new_records_list = existing_rrset["records"] + [
-                                record
-                                for record in prop_rrset["records"]
-                                if record not in existing_rrset["records"]
-                            ]
-                        else:
-                            # Building a list of remaining records
-                            # after removing provided ones from existing ones
-                            new_records_list = [] + [
-                                r
-                                for r in existing_rrset["records"]
-                                if r not in prop_rrset["records"]
-                            ]
-
-                        if new_records_list != existing_rrset["records"]:
-                            zone_struct.setdefault("rrsets", []).append(
-                                {
-                                    **prop_rrset,
-                                    "records": new_records_list,
-                                    "changetype": "REPLACE",
-                                }
-                            )
+            if (prop_catalog := props["catalog"]) and zone_info["catalog"] != prop_catalog:
+                zone_struct["catalog"] = prop_catalog
 
         if module.params["metadata"]:
             for updater in ZoneMetadata.updaters(
@@ -1672,12 +1503,8 @@ def main():
                 updater(zone_struct)
 
         if zone_struct:
-            if "rrsets" in zone_struct:
-                api_zone_client.patchZone(zone_struct=zone_struct)
-                result["changed"] = True
-            else:
-                api_zone_client.putZone(zone_struct=zone_struct)
-                result["changed"] = True
+            api_zone_client.putZone(zone_struct=zone_struct)
+            result["changed"] = True
 
         if module.params["metadata"]:
             for updater in Metadata.updaters(result["zone"]["metadata"], module.params["metadata"]):

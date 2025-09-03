@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - test-actions
+      - record-types
   pull_request:
     types:
       - opened
