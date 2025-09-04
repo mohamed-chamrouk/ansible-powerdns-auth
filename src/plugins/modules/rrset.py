@@ -159,7 +159,7 @@ def main():
             "options": {
                 "flags": {"type": "int", "required": False, "default": 0, "choices": [0, 1]},
                 "tag": {"type": "str", "required": True},
-                "value": {"type": "str", "required": True},
+                "value": {"type": "raw", "required": True},
                 "disabled": {"type": "bool", "required": False, "default": False},
             },
         },
