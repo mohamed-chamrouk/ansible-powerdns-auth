@@ -18,7 +18,7 @@ on:
 
 jobs:
   preflight:
-    runs-on: ubuntu-22.04-arm
+    runs-on: ubuntu-latest
     outputs:
       image_base: ${{ steps.details.outputs.image_base }}
       image_tag: ${{ steps.preflight.outputs.image_tag }}
@@ -33,7 +33,7 @@ jobs:
       - id: details
         uses: kpfleming/composite-actions/image-details@v3
         with:
-          base_image: python:v4-bookworm-main
+          base_image: 3.14-rc-bookworm⁠
           image_registry: quay.io
           registry_account: ${{ vars.QUAY_REPO_ACCOUNT }}
       - id: preflight
@@ -47,8 +47,8 @@ jobs:
         if: steps.preflight.outputs.need_image == 'true'
         with:
           build_args: ${{ join(fromJSON(steps.get_versions.outputs.versions).pdns, ' ') }}
-          base_image: ${{ steps.details.outputs.base_image }}
-          image_name: ${{ steps.details.outputs.image_base }}:${{ steps.preflight.outputs.image_tag }}
+          base_image: python
+          image_name: python:3.14-rc-bookworm⁠
           image_cache_key: ${{ steps.preflight.outputs.image_cache_key }}
           image_registry: ${{ steps.details.outputs.image_registry }}
           registry_username: ${{ vars.FORGE_BOT_NAME }}
