@@ -12,7 +12,7 @@ rrsets:
   - CAA:
       - flags: 0
         tag: issue
-        value: "letsencrypt.org"
+        value: \"letsencrypt.org\"
         disabled: false
   - CNAME:
       - cname: app.example.com.
