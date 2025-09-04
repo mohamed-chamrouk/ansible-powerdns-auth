@@ -489,7 +489,7 @@ def main():
         for rrset in rrset_records:
             for record in rrset["records"]:
                 disabled = record.pop("disabled")
-                rtype = record.keys()[0]
+                rtype = next(iter(record))
                 safe_record = safe_string_record(rtype, record[rtype], [module_args[type] for type in record_types])
                 records += [{"disabled": disabled, "content": " ".join(map(str, safe_record.values()))}]
 
