@@ -69,6 +69,7 @@ def build_zone_result(api_client):
 
 
 def safe_string_record(record_type, record, type_def):
+    print(f"==================================={record_type}===========================")
     record_spec = type_def[record_type]
 
     safe_record = record
@@ -481,7 +482,15 @@ def main():
         module.fail_json("State is present but no valid record has been provided")
 
     if rrset_record_types:
-        rrset_records = [{"type": type, "records": params[type]} for type in rrset_record_types]
+        rrset_records = [
+            {
+                "type": type,
+                "records": safe_string_record(
+                    type, params[type], {type: module_args[type] for type in record_types}
+                ),
+            }
+            for type in rrset_record_types
+        ]
 
         rrsets_struct = []
         records = []
@@ -489,9 +498,7 @@ def main():
         for rrset in rrset_records:
             for record in rrset["records"]:
                 disabled = record.pop("disabled")
-                rtype = next(iter(record))
-                safe_record = safe_string_record(rtype, record[rtype], [module_args[type] for type in record_types])
-                records += [{"disabled": disabled, "content": " ".join(map(str, safe_record.values()))}]
+                records += [{"disabled": disabled, "content": " ".join(map(str, record.values()))}]
 
             rrsets_struct += [
                 {
