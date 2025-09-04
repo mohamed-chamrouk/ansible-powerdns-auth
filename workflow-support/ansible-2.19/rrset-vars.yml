@@ -24,7 +24,7 @@ rrsets:
   - HTTPS:
       - priority: 1
         target: svc.example.com.
-        params: "alpn=h2,http/1.1;port=443"
+        params: alpn=h2,http/1.1 port=443
         disabled: false
   - LOC:
       - latitude: 37.7749
