@@ -206,7 +206,8 @@ try:
     import dns.reversename
     import dns.rdataclass
     from dns.rdatatype import (A, AAAA, CAA, CNAME, DNAME, DNSKEY, DS, HINFO, LOC,
-                               MX, NAPTR, NS, NSEC3PARAM, PTR, RP, SOA, SPF, SRV, SSHFP, TLSA, TXT)
+                               MX, NAPTR, NS, NSEC3PARAM, PTR, RP, SOA, SPF, SRV,
+                               HTTPS, SSHFP, TLSA, TXT)
     HAVE_DNS = True
 except ImportError:
     HAVE_DNS = False
