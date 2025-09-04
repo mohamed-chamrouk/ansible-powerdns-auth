@@ -462,14 +462,14 @@ def main():
     changetype = "REPLACE" if params["state"] == "present" else "DELETE"
     rrset_record_types = list(set([p for p in params if params[p] is not None]) & set(record_types))
 
+    print([params[type] for type in rrset_record_types])
+
     # Check couldn't fit in AnsibleModule args
     type_classic = "type" in params and "records" in params
     if params["state"] == "present" and not (type_classic or rrset_record_types):
         module.fail_json(
             "State is present but no valid record has been provided"
         )
-
-    module.debug(params)
 
     if rrset_record_types:
         rrset_records = [{"type": type, "records": params[type]} for type in rrset_record_types]
