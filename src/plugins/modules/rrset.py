@@ -479,7 +479,7 @@ def main():
         for rrset in rrset_records:
             for record in rrset["records"]:
                 disabled = record.pop("disabled")
-                records += [{"disabled": disabled, "content": " ".join(record.values())}]
+                records += [{"disabled": disabled, "content": " ".join(map(str, record.values()))}]
 
             rrsets_struct += [
                 {
