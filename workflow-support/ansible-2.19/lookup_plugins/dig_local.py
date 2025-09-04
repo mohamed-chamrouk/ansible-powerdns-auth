@@ -231,6 +231,7 @@ def make_rdata_dict(rdata):
         DNSKEY: ['flags', 'algorithm', 'protocol', 'key'],
         DS: ['algorithm', 'digest_type', 'key_tag', 'digest'],
         HINFO: ['cpu', 'os'],
+        HTTPS: ['priority', 'target', 'params'],
         LOC: ['latitude', 'longitude', 'altitude', 'size', 'horizontal_precision', 'vertical_precision'],
         MX: ['preference', 'exchange'],
         NAPTR: ['order', 'preference', 'flags', 'service', 'regexp', 'replacement'],
