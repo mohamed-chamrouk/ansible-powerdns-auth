@@ -469,7 +469,7 @@ def main():
             "State is present but no valid record has been provided"
         )
 
-    print(params)
+    module.debug(params)
 
     if rrset_record_types:
         rrset_records = [{"type": type, "records": params[type]} for type in rrset_record_types]
