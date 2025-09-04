@@ -17,18 +17,6 @@ rrsets:
   - CNAME:
       - cname: app.example.com.
         disabled: false
-  - DNSKEY:
-      - flags: 257
-        protocol: 3
-        algorithm: 8
-        public_key: MIIBIjANBg...base64key...QAB
-        disabled: false
-  - DS:
-      - key_tag: 2371
-        algorithm: 8
-        digest_type: 2
-        digest: 3F1C2D7A9B0E4A6F8C1D2233445566778899AABBCCDDEEFF001122334455667
-        disabled: false
   - HINFO:
       - cpu: "Intel Xeon"
         os: "Linux"
@@ -63,24 +51,6 @@ rrsets:
         disabled: false
   - NS:
       - host: ns1.example.com.
-        disabled: false
-  - NSEC:
-      - next_domain: next.example.com.
-        type_bitmap: "A AAAA RRSIG NSEC"
-        disabled: false
-  - NSEC3:
-      - hash_algorithm: 1
-        flags: 1
-        iterations: 10
-        salt: A1B2C3D4
-        next_hashed: 3P5L4Q0C7N2J8K1M
-        type_bitmap: "A AAAA RRSIG NSEC3"
-        disabled: false
-  - NSEC3PARAM:
-      - hash_algorithm: 1
-        flags: 0
-        iterations: 10
-        salt: A1B2C3D4
         disabled: false
   - PTR:
       - ptrdname: host-1.example.com.
@@ -147,3 +117,35 @@ rrsets:
         disabled: false
       - strings: "project=homelab env=dev"
         disabled: true
+
+rrsets_dnssec:
+  - DNSKEY:
+      - flags: 257
+        protocol: 3
+        algorithm: 8
+        public_key: MIIBIjANBg...base64key...QAB
+        disabled: false
+  - DS:
+      - key_tag: 2371
+        algorithm: 8
+        digest_type: 2
+        digest: 3F1C2D7A9B0E4A6F8C1D2233445566778899AABBCCDDEEFF001122334455667
+        disabled: false
+  - NSEC:
+      - next_domain: next.example.com.
+        type_bitmap: "A AAAA RRSIG NSEC"
+        disabled: false
+  - NSEC3:
+      - hash_algorithm: 1
+        flags: 1
+        iterations: 10
+        salt: A1B2C3D4
+        next_hashed: 3P5L4Q0C7N2J8K1M
+        type_bitmap: "A AAAA RRSIG NSEC3"
+        disabled: false
+  - NSEC3PARAM:
+      - hash_algorithm: 1
+        flags: 0
+        iterations: 10
+        salt: A1B2C3D4
+        disabled: false
