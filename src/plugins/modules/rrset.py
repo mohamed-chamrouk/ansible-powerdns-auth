@@ -254,8 +254,8 @@ def main():
             "options": {
                 "order": {"type": "int", "required": True},
                 "preference": {"type": "int", "required": True},
-                "flags": {"type": "str", "required": True},
-                "services": {"type": "str", "required": True},
+                "flags": {"type": "raw", "required": True},
+                "services": {"type": "raw", "required": True},
                 "regexp": {"type": "raw", "required": True},
                 "replacement": {"type": "raw", "required": True},
                 "disabled": {"type": "bool", "required": False, "default": False},
