@@ -69,16 +69,15 @@ def build_zone_result(api_client):
 
 
 def safe_string_record(record_type, record, type_def):
-    print(f"==================================={record_type}===========================")
     record_spec = type_def[record_type]
 
     safe_record = record
 
-    if len(record_spec) > 2:
-        for field in record_spec:
-            if field["name"] in record and field["type"] == "str":
-                value = safe_record[field["name"]]
-                safe_record[field["name"]] = '"' + value.removeprefix('"').removesuffix('"') + '"'
+    if len(record_spec["options"]) > 2:
+        for field in record_spec["options"].items():
+            if field[0] in record and field[1]["type"] == "raw":
+                value = safe_record[field[0]]
+                safe_record[field[0]] = '"' + value.removeprefix('"').removesuffix('"') + '"'
 
     return safe_record
 
@@ -174,7 +173,7 @@ def main():
             "options": {
                 "flags": {"type": "int", "required": False, "default": 0, "choices": [0, 1]},
                 "tag": {"type": "str", "required": True},
-                "value": {"type": "str", "required": True},
+                "value": {"type": "raw", "required": True},
                 "disabled": {"type": "bool", "required": False, "default": False},
             },
         },
@@ -212,8 +211,8 @@ def main():
             "type": "list",
             "elements": "dict",
             "options": {
-                "cpu": {"type": "str", "required": True},
-                "os": {"type": "str", "required": True},
+                "cpu": {"type": "raw", "required": True},
+                "os": {"type": "raw", "required": True},
                 "disabled": {"type": "bool", "required": False, "default": False},
             },
         },
@@ -257,8 +256,8 @@ def main():
                 "preference": {"type": "int", "required": True},
                 "flags": {"type": "str", "required": True},
                 "services": {"type": "str", "required": True},
-                "regexp": {"type": "str", "required": True},
-                "replacement": {"type": "str", "required": True},
+                "regexp": {"type": "raw", "required": True},
+                "replacement": {"type": "raw", "required": True},
                 "disabled": {"type": "bool", "required": False, "default": False},
             },
         },
@@ -315,8 +314,8 @@ def main():
             "type": "list",
             "elements": "dict",
             "options": {
-                "mbox": {"type": "str", "required": True},
-                "txt": {"type": "str", "required": True},
+                "mbox": {"type": "raw", "required": True},
+                "txt": {"type": "raw", "required": True},
                 "disabled": {"type": "bool", "required": False, "default": False},
             },
         },
@@ -340,7 +339,7 @@ def main():
             "type": "list",
             "elements": "dict",
             "options": {
-                "strings": {"type": "str", "required": True},
+                "strings": {"type": "raw", "required": True},
                 "disabled": {"type": "bool", "required": False, "default": False},
             },
         },
@@ -404,7 +403,7 @@ def main():
             "type": "list",
             "elements": "dict",
             "options": {
-                "strings": {"type": "str", "required": True},
+                "strings": {"type": "raw", "required": True},
                 "disabled": {"type": "bool", "required": False, "default": False},
             },
         },
@@ -485,9 +484,9 @@ def main():
         rrset_records = [
             {
                 "type": type,
-                "records": safe_string_record(
-                    type, params[type], {type: module_args[type] for type in record_types}
-                ),
+                "records": [safe_string_record(
+                    type, record, {type: module_args[type] for type in record_types}
+                ) for record in params[type]],
             }
             for type in rrset_record_types
         ]
