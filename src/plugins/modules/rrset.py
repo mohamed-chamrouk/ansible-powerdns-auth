@@ -68,6 +68,20 @@ def build_zone_result(api_client):
     return api_zone, z
 
 
+def safe_string_record(record_type, record, type_def):
+    record_spec = type_def[record_type]
+
+    safe_record = record
+
+    if len(record_spec) > 2:
+        for field in record_spec:
+            if field["name"] in record and field["type"] == "str":
+                value = safe_record[field["name"]]
+                safe_record[field["name"]] = '"' + value.removeprefix('"').removesuffix('"') + '"'
+
+    return safe_record
+
+
 def main():
     module_args = {
         "state": {
@@ -428,8 +442,8 @@ def main():
         supports_check_mode=True,
         mutually_exclusive=[(record_type, "records") for record_type in record_types]
         + [(record_type, "type") for record_type in record_types],
-        required_one_of=[record_types+["type"]],
-        required_if=[('state', 'absent', record_types+['type'], True)]
+        required_one_of=[record_types + ["type"]],
+        required_if=[("state", "absent", record_types + ["type"], True)],
     )
 
     state = module.params["state"]
@@ -438,7 +452,6 @@ def main():
     result = {
         "changed": False,
     }
-
 
     # create an object to proxy the raw API object
     # and carry the server_id into all API calls
@@ -462,14 +475,10 @@ def main():
     changetype = "REPLACE" if params["state"] == "present" else "DELETE"
     rrset_record_types = list(set([p for p in params if params[p] is not None]) & set(record_types))
 
-    print([params[type] for type in rrset_record_types])
-
     # Check couldn't fit in AnsibleModule args
     type_classic = "type" in params and "records" in params
     if params["state"] == "present" and not (type_classic or rrset_record_types):
-        module.fail_json(
-            "State is present but no valid record has been provided"
-        )
+        module.fail_json("State is present but no valid record has been provided")
 
     if rrset_record_types:
         rrset_records = [{"type": type, "records": params[type]} for type in rrset_record_types]
@@ -480,7 +489,9 @@ def main():
         for rrset in rrset_records:
             for record in rrset["records"]:
                 disabled = record.pop("disabled")
-                records += [{"disabled": disabled, "content": " ".join(map(str, record.values()))}]
+                rtype = record.keys()[0]
+                safe_record = safe_string_record(rtype, record[rtype], [module_args[type] for type in record_types])
+                records += [{"disabled": disabled, "content": " ".join(map(str, safe_record.values()))}]
 
             rrsets_struct += [
                 {
@@ -531,9 +542,7 @@ def main():
                 if rrset["type"] is not None:
                     zone_struct.setdefault("rrsets", []).append(rrset)
                 else:
-                    module.fail_json(
-                        "No valid record found for rrset creation."
-                    )
+                    module.fail_json("No valid record found for rrset creation.")
             elif rrset_changetype == "DELETE":
                 if existing_rrset:
                     zone_struct.setdefault("rrsets", []).append(rrset)
