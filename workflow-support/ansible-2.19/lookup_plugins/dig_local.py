@@ -38,7 +38,7 @@ DOCUMENTATION = '''
             - C(CAA) has been added in community.general 6.3.0.
         type: str
         default: 'A'
-        choices: [A, ALL, AAAA, CAA, CNAME, DNAME, DNSKEY, DS, HINFO, LOC, MX, NAPTR, NS, NSEC3PARAM, PTR, RP, RRSIG, SOA, SPF, SRV, SSHFP, TLSA, TXT]
+        choices: [A, ALL, AAAA, CAA, CNAME, DNAME, DNSKEY, DS, HINFO, HTTPS, LOC, MX, NAPTR, NS, NSEC3PARAM, PTR, RP, RRSIG, SOA, SPF, SRV, SSHFP, TLSA, TXT]
       flat:
         description: If 0 each record is returned as a dictionary, otherwise a string.
         type: int
@@ -205,9 +205,9 @@ try:
     import dns.resolver
     import dns.reversename
     import dns.rdataclass
-    from dns.rdatatype import (A, AAAA, CAA, CNAME, DNAME, DNSKEY, DS, HINFO, LOC,
-                               MX, NAPTR, NS, NSEC3PARAM, PTR, RP, SOA, SPF, SRV,
-                               HTTPS, SSHFP, TLSA, TXT)
+    from dns.rdatatype import (A, AAAA, CAA, CNAME, DNAME, DNSKEY, DS, HINFO, HTTPS,
+                               LOC, MX, NAPTR, NS, NSEC3PARAM, PTR, RP, SOA, SPF, SRV,
+                               SSHFP, TLSA, TXT)
     HAVE_DNS = True
 except ImportError:
     HAVE_DNS = False
