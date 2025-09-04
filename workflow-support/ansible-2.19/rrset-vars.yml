@@ -27,12 +27,12 @@ rrsets:
         params: alpn=h2,http/1.1 port=443
         disabled: false
   - LOC:
-      - latitude: 37.7749
-        longitude: -122.4194
-        altitude: 15.0
-        size: 1.0
-        horizontal_precision: 10.0
-        vertical_precision: 2.0
+      - latitude: 37 0 0.000 N
+        longitude: 122 0 0.000 E
+        altitude: 15.00m
+        size: 1.00m
+        horizontal_precision: 10.00m
+        vertical_precision: 2.00m
         disabled: false
   - MX:
       - preference: 10
