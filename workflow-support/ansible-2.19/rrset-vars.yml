@@ -18,8 +18,8 @@ rrsets:
       - cname: app.example.com.
         disabled: false
   - HINFO:
-      - cpu: "Intel Xeon"
-        os: "Linux"
+      - cpu: '"Intel Xeon"'
+        os: '"Linux"'
         disabled: false
   - HTTPS:
       - priority: 1
