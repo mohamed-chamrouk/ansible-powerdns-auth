@@ -314,8 +314,8 @@ def main():
             "type": "list",
             "elements": "dict",
             "options": {
-                "mbox": {"type": "raw", "required": True},
-                "txt": {"type": "raw", "required": True},
+                "mbox": {"type": "str", "required": True},
+                "txt": {"type": "str", "required": True},
                 "disabled": {"type": "bool", "required": False, "default": False},
             },
         },
