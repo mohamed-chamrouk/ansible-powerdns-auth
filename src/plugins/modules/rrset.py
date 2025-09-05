@@ -73,11 +73,10 @@ def safe_string_record(record_type, record, type_def):
 
     safe_record = record
 
-    if len(record_spec["options"]) > 2:
-        for field in record_spec["options"].items():
-            if field[0] in record and field[1]["type"] == "raw":
-                value = safe_record[field[0]]
-                safe_record[field[0]] = '"' + value.removeprefix('"').removesuffix('"') + '"'
+    for field in record_spec["options"].items():
+        if field[0] in record and field[1]["type"] == "raw":
+            value = safe_record[field[0]]
+            safe_record[field[0]] = '"' + value.removeprefix('"').removesuffix('"') + '"'
 
     return safe_record
 
