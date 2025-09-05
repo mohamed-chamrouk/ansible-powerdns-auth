@@ -257,7 +257,7 @@ def main():
                 "flags": {"type": "raw", "required": True},
                 "services": {"type": "raw", "required": True},
                 "regexp": {"type": "raw", "required": True},
-                "replacement": {"type": "raw", "required": True},
+                "replacement": {"type": "str", "required": True},
                 "disabled": {"type": "bool", "required": False, "default": False},
             },
         },
