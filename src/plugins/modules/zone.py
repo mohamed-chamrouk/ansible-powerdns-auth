@@ -1342,6 +1342,7 @@ def main():
         module.exit_json(**result)
 
     if state == "rectify":
+        print("======================debug=====================")
         api_zone_client.rectifyZone()
         result["changed"] = True
         module.exit_json(**result)
