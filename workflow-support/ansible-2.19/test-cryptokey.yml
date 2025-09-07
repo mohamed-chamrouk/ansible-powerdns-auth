@@ -158,6 +158,8 @@
             state: "exists"
           ignore_errors: true
           register: result
+    - debug:
+        var: result
     - ansible.builtin.assert:
         quiet: true
         that:
