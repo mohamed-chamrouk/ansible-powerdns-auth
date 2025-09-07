@@ -38,7 +38,7 @@ DOCUMENTATION = '''
             - C(CAA) has been added in community.general 6.3.0.
         type: str
         default: 'A'
-        choices: [A, ALL, AAAA, CAA, CNAME, DNAME, DNSKEY, DS, HINFO, HTTPS, LOC, MX, NAPTR, NS, NSEC3PARAM, PTR, RP, RRSIG, SOA, SPF, SRV, SSHFP, TLSA, TXT]
+        choices: [A, ALL, AAAA, CAA, CNAME, DNAME, DNSKEY, DS, HINFO, HTTPS, LOC, MX, NAPTR, NS, NSEC3PARAM, PTR, RP, RRSIG, SOA, SPF, SRV, SSHFP, SVCB, TLSA, TXT]
       flat:
         description: If 0 each record is returned as a dictionary, otherwise a string.
         type: int
