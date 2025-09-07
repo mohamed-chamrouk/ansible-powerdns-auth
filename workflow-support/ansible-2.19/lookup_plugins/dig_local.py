@@ -207,7 +207,7 @@ try:
     import dns.rdataclass
     from dns.rdatatype import (A, AAAA, CAA, CNAME, DNAME, DNSKEY, DS, HINFO, HTTPS,
                                LOC, MX, NAPTR, NS, NSEC3PARAM, PTR, RP, SOA, SPF, SRV,
-                               SSHFP, TLSA, TXT)
+                               SSHFP, SVCB, TLSA, TXT)
     HAVE_DNS = True
 except ImportError:
     HAVE_DNS = False
@@ -245,6 +245,7 @@ def make_rdata_dict(rdata):
         SPF: ['strings'],
         SRV: ['priority', 'weight', 'port', 'target'],
         SSHFP: ['algorithm', 'fp_type', 'fingerprint'],
+        SVCB: ['priority', 'target', 'params'],
         TLSA: ['usage', 'selector', 'mtype', 'cert'],
         TXT: ['strings'],
     }
