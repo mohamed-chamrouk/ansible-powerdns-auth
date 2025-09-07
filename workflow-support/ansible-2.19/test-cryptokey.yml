@@ -80,7 +80,7 @@
           - result['exception'] is not defined
           - not result.failed
           - result.changed
-          - result.cryptokey["algorithm"] == "ed25519"
+          - result.cryptokey["algorithm"].lower() == "ed25519"
           - result.cryptokey["active"] == true
           - result.cryptokey["keytype"] == "csk"
           - result.cryptokeys == []
@@ -104,7 +104,7 @@
           - result.cryptokey["algorithm"] == "ed25519"
           - result.cryptokey["active"] == true
           - result.cryptokey["keytype"] == "csk"
-          - result.cryptokeys == []
+          - result.cryptokeys.lower() == []
           - output == ""
       vars:
         output: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=false, real_empty=false) }}"
