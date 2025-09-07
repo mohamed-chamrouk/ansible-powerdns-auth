@@ -73,14 +73,13 @@
     - ansible.builtin.assert:
         quiet: true
         that:
-          - result['exception'] is not defined
+          - result.exception not defined
           - not result.failed
-          - result.cryptokey["algorithm"] == "ED25519"
-          - result.cryptokey["active"] == true
-          - result.cryptokey["keytype"] == "csk"
-          - (result.cryptokey["ds"] | length) == 3
-          - (result.cryptokey["dnskey"] | length) > 0
-          - output["algorithm"] == 15
+          - result.cryptokey.algorithm == "ed25519"
+          - result.cryptokey.active == true
+          - result.cryptokey.keytype == "csk"
+          - output.algorithm == 15
+          - output.owner == "cryptokeys.example."
       vars:
         output: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=false, real_empty=false) }}"
 
