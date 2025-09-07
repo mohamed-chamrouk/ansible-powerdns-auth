@@ -27,6 +27,8 @@
               type: A
               records:
                 - content: 192.168.1.1
+        metadata:
+          api_rectify: true
       register: result
 
     - ansible.builtin.assert:
@@ -102,12 +104,12 @@
     #        keep: true
     #        NS:
     #          - host: ns2.example.
-    - name: rectifying zone
-      kpfleming.powerdns_auth.zone:
-        api_key: foo
-        state: rectify
-        name: cryptokeys.example.
-      ignore_errors: true
+    #- name: rectifying zone
+    #  kpfleming.powerdns_auth.zone:
+    #    api_key: foo
+    #    state: rectify
+    #    name: cryptokeys.example.
+    #  ignore_errors: true
     - debug:
         var: output
       vars:
