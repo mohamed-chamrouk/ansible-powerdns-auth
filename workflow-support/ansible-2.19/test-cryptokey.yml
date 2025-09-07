@@ -78,6 +78,7 @@
       kpfleming.powerdns_auth.cryptokey:
         <<: *common
         state: exists
+        cryptokey_id: 1
       ignore_errors: true
       register: result
     - debug:
