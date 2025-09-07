@@ -607,6 +607,10 @@ class APIZoneWrapper(APIWrapper):
             **kwargs,
         ).result()
 
+    @api_exception_handler
+    def rectifyZone(self):
+        return self.raw_api.rectifyZone(server_id=self.server_id, zone_id= self.zone_id).result()
+
 
 class APIZoneMetadataWrapper(APIWrapper):
     def __init__(self, *, module, result, object_type, zone_id):
@@ -1057,7 +1061,7 @@ def main():
         "state": {
             "type": "str",
             "default": "present",
-            "choices": ["present", "absent", "exists", "notify", "retrieve"],
+            "choices": ["present", "absent", "exists", "notify", "retrieve", "rectify"],
         },
         "name": {
             "type": "str",
@@ -1335,6 +1339,11 @@ def main():
     # if only an existence check was requested,
     # the operation is complete
     if state == "exists":
+        module.exit_json(**result)
+
+    if state == "rectify":
+        api_zone_client.rectifyZone()
+        result["changed"] = True
         module.exit_json(**result)
 
     # if absence was requested, remove the zone and exit

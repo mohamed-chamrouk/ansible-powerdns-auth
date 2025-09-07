@@ -27,8 +27,6 @@
               type: A
               records:
                 - content: 192.168.1.1
-        metadata:
-          api_rectify: true
       register: result
 
     - ansible.builtin.assert:
@@ -69,6 +67,11 @@
           active: true
       ignore_errors: true
       register: result
+    - name: rectifying zone
+      kpfleming.powerdns_auth.zone:
+        api_key: foo
+        name: cryptokeys.example.
+        state: rectify
     #- name: creating A rrset
     #  kpfleming.powerdns_auth.rrset:
     #    <<: *common
