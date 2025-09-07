@@ -27,9 +27,6 @@
               type: A
               records:
                 - content: 192.168.1.1
-        metadata:
-          api_rectify: true
-          soa_edit_api: INCEPTION-INCREMENT
       register: result
 
     - ansible.builtin.assert:
@@ -98,23 +95,13 @@
         cryptokey_id: 1
       ignore_errors: true
       register: result
-    #    - name: updating NS rrset to make DNSKEY available #(weird behavior, don't know what's happening)
-    #      kpfleming.powerdns_auth.rrset:
-    #        <<: *common
-    #        name: cryptokeys.example.
-    #        keep: true
-    #        NS:
-    #          - host: ns2.example.
-    #- name: rectifying zone
-    #  kpfleming.powerdns_auth.zone:
-    #    api_key: foo
-    #    state: rectify
-    #    name: cryptokeys.example.
-    #  ignore_errors: true
-    - debug:
-        var: output
-      vars:
-        output: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=false, real_empty=false) }}"
+    - name: updating NS rrset to make DNSKEY available #(weird behavior, don't know what's happening)
+      kpfleming.powerdns_auth.rrset:
+        <<: *common
+        name: cryptokeys.example.
+        keep: true
+        NS:
+          - host: ns2.example.
     - ansible.builtin.assert:
         quiet: true
         that:

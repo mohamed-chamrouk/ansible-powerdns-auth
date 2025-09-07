@@ -1260,7 +1260,6 @@ def main():
                         "EPOCH",
                         "SOA-EDIT",
                         "SOA-EDIT-INCREASE",
-                        "INCEPTION-INCREMENT"
                     ],
                 },
                 "soa_edit_dnsupdate": {
