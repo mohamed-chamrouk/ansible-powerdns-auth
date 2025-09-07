@@ -22,11 +22,6 @@
           soa:
             mname: localhost.
             rname: hostmaster.localhost.
-        metadata:
-          allow_axfr_from:
-            - AUTO-NS
-          ixfr: true
-          axfr_source: 127.0.0.1
       register: result
 
     - ansible.builtin.assert:
@@ -38,9 +33,6 @@
           - result.zone.name == "cryptokeys.example."
           - result.zone.kind == "Native"
           - result.zone.account == "test-account1"
-          - result.zone.metadata.allow_axfr_from[0] == "AUTO-NS"
-          - result.zone.metadata.ixfr
-          - result.zone.metadata.axfr_source == "127.0.0.1"
 
   tasks:
     - name: check that there are no keys
