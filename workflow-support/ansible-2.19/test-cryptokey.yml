@@ -9,8 +9,7 @@
       zone_name: cryptokeys.example.
     refresh_task: &refresh
       kpfleming.powerdns_auth.rrset:
-        api_key: foo
-        zone_name: cryptokeys.example.
+        <<: *common
         name: cryptokeys.example.
         NS:
           - host: ns1.example.
@@ -74,13 +73,6 @@
           active: true
       ignore_errors: true
       register: result
-    #- name: updating NS rrset to make DNSKEY available #(weird behavior, don't know what's happening)
-    #  kpfleming.powerdns_auth.rrset:
-    #    <<: *common
-    #    name: cryptokeys.example.
-    #    keep: true
-    #    NS:
-    #      - host: ns1.example.
     - <<: *refresh
     - ansible.builtin.assert:
         quiet: true
@@ -103,13 +95,7 @@
         cryptokey_id: 1
       ignore_errors: true
       register: result
-    - name: updating NS rrset to make DNSKEY available #(weird behavior, don't know what's happening)
-      kpfleming.powerdns_auth.rrset:
-        <<: *common
-        name: cryptokeys.example.
-        keep: true
-        NS:
-          - host: ns2.example.
+    - <<: *refresh
     - ansible.builtin.assert:
         quiet: true
         that:
