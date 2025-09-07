@@ -121,6 +121,7 @@
           active: true
       ignore_errors: true
       register: result
+    - <<: *refresh
     - ansible.builtin.assert:
         quiet: true
         that:
@@ -174,6 +175,7 @@
             cryptokey_id: "{{ last_id }}"
           ignore_errors: true
           register: result_get
+    - <<: *refresh
     - ansible.builtin.assert:
         quiet: true
         that:
