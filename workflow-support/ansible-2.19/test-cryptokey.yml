@@ -62,6 +62,12 @@
           active: true
       ignore_errors: true
       register: result
+    - name: creating A rrset
+      kpfleming.powerdns_auth.rrset:
+        <<: *common
+        name: cryptokeys.example.
+        A:
+          - address: 127.0.0.1
     - name: get zone info
       kpfleming.powerdns_auth.zone:
         api_key: foo
