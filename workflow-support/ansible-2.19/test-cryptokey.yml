@@ -67,47 +67,27 @@
           active: true
       ignore_errors: true
       register: result
-    - name: updating NS rrset
+    - name: updating NS rrset to make DNSKEY available #(weird behavior, don't know what's happening)
       kpfleming.powerdns_auth.rrset:
         <<: *common
         name: cryptokeys.example.
         keep: true
         NS:
           - host: ns1.example.
-    - name: get zone info
-      kpfleming.powerdns_auth.zone:
-        api_key: foo
-        state: exists
-        name: cryptokeys.example.
-      register: zone
-    - debug:
-        var: zone
-    - debug:
-        var: output
-      vars:
-        output: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=true, real_empty=true) }}"
-    - name: check that there are no keys
-      kpfleming.powerdns_auth.cryptokey:
-        <<: *common
-        state: exists
-        cryptokey_id: 1
-      ignore_errors: true
-      register: result
-    - debug:
-        var: result
     - ansible.builtin.assert:
         quiet: true
         that:
           - result['exception'] is not defined
           - not result.failed
           - result.changed
-          - result.cryptokey.algorithm == "ed25519"
-          - result.cryptokey.active == true
-          - result.cryptokey.keytype == "csk"
-          - output['algorithm'] == 15
-          - output['owner'] == "cryptokeys.example."
+          - result.cryptokey["algorithm"] == "ed25519"
+          - result.cryptokey["active"] == true
+          - result.cryptokey["keytype"] == "csk"
+          - (result.cryptokey["ds"] | length) > 0
+          - result.cryptokeys == []
+          - output["algorithm"] == 15
       vars:
-        output: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=false, real_empty=false) }}"
+        output: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=true, real_empty=true) }}"
 
     - name: check key deletion
       kpfleming.powerdns_auth.cryptokey:
@@ -121,6 +101,7 @@
         that:
           - result['exception'] is not defined
           - not result.failed
+          - result.changed
           - result.cryptokey == {}
           - result.cryptokeys == []
           - output == ""
