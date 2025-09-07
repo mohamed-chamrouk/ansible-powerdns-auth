@@ -73,7 +73,7 @@
     - debug:
         var: output
       vars:
-        output: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=false, real_empty=false) }}"
+        output: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=true, real_empty=true) }}"
     - name: check that there are no keys
       kpfleming.powerdns_auth.cryptokey:
         <<: *common
