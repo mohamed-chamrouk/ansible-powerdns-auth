@@ -142,13 +142,6 @@
             <<: *common
             state: present
             cryptokey:
-              keytype: ksk
-              algorithm: ed25519
-        - name: creating key
-          kpfleming.powerdns_auth.cryptokey:
-            <<: *common
-            state: present
-            cryptokey:
               keytype: zsk
               algorithm: ed25519
           register: cryptokey
