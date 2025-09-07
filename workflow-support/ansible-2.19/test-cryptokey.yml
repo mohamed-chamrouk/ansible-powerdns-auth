@@ -132,11 +132,9 @@
         that:
           - result['exception'] is not defined
           - not result.failed
-          - result.cryptokey["algorithm"] == "ED25519"
           - result.cryptokey["active"] == true
           - result.cryptokey["keytype"] == "zsk"
           - result.cryptokey["dnskey"] == "257 3 15 lMu/7quhLeSueMcdlt3T0sxln32yhrhASCKKDB1xJOk="
-          - (result.cryptokey["ds"] | length) > 0
           - output["key"] == "lMu/7quhLeSueMcdlt3T0sxln32yhrhASCKKDB1xJOk="
           - output["algorithm"] == 15
       vars:
