@@ -75,6 +75,9 @@
         api_key: foo
         state: exists
         name: cryptokeys.example.
+      register: zone
+    - debug:
+        var: zone
     - debug:
         var: output
       vars:
