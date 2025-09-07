@@ -50,7 +50,6 @@
       kpfleming.powerdns_auth.cryptokey:
         <<: *common
         state: exists
-      ignore_errors: true
       register: result
     - ansible.builtin.assert:
         quiet: true
@@ -71,7 +70,6 @@
           keytype: csk
           algorithm: ed25519
           active: true
-      ignore_errors: true
       register: result
     - <<: *refresh
     - ansible.builtin.assert:
@@ -93,7 +91,6 @@
         <<: *common
         state: absent
         cryptokey_id: 1
-      ignore_errors: true
       register: result
     - <<: *refresh
     - ansible.builtin.assert:
@@ -119,7 +116,6 @@
           dnskey: "257 3 15 lMu/7quhLeSueMcdlt3T0sxln32yhrhASCKKDB1xJOk="
           privatekey: "Private-key-format: v1.2\nAlgorithm: 15 (ED25519)\nPrivateKey: Rnt2dv3mWMmP8bU/8koayZ4R5dWdI86zJmZ0nnjPe6Q=\n"
           active: true
-      ignore_errors: true
       register: result
     - <<: *refresh
     - ansible.builtin.assert:
@@ -150,7 +146,6 @@
           kpfleming.powerdns_auth.cryptokey:
             <<: *common
             state: "exists"
-          ignore_errors: true
           register: result
     - ansible.builtin.assert:
         quiet: true
