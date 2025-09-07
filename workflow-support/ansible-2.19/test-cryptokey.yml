@@ -71,7 +71,10 @@
       ignore_errors: true
       register: result
     - shell: |
-        dig DNSKEY cryptokeys.example. +dnssec +multi @127.0.0.1
+        curl -sS -X GET \
+          -H 'X-API-Key: foo' \
+          -H 'Content-Type: application/json' \
+          http://127.0.0.1:8081/api/v1/servers/localhost/zones/cryptokeys.example.
       register: dig
     - debug:
         var: dig
