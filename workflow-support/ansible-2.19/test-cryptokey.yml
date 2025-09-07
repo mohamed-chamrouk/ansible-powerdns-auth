@@ -101,7 +101,9 @@
           - result['exception'] is not defined
           - not result.failed
           - result.changed
-          - result.cryptokey == {}
+          - result.cryptokey["algorithm"] == "ed25519"
+          - result.cryptokey["active"] == true
+          - result.cryptokey["keytype"] == "csk"
           - result.cryptokeys == []
           - output == ""
       vars:
