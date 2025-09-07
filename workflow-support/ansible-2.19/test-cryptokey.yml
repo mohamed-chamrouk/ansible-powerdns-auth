@@ -95,6 +95,10 @@
         cryptokey_id: 1
       ignore_errors: true
       register: result
+    - debug:
+        var: output
+      vars:
+        output: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=false, real_empty=false) }}"
     - ansible.builtin.assert:
         quiet: true
         that:
