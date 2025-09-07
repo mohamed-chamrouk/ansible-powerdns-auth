@@ -95,13 +95,19 @@
         cryptokey_id: 1
       ignore_errors: true
       register: result
-    - name: updating NS rrset to make DNSKEY available #(weird behavior, don't know what's happening)
-      kpfleming.powerdns_auth.rrset:
-        <<: *common
+    #    - name: updating NS rrset to make DNSKEY available #(weird behavior, don't know what's happening)
+    #      kpfleming.powerdns_auth.rrset:
+    #        <<: *common
+    #        name: cryptokeys.example.
+    #        keep: true
+    #        NS:
+    #          - host: ns2.example.
+    - name: rectifying zone
+      kpfleming.powerdns_auth.zone:
+        api_key: foo
+        state: rectify
         name: cryptokeys.example.
-        keep: true
-        NS:
-          - host: ns2.example.
+      ignore_errors: true
     - debug:
         var: output
       vars:
