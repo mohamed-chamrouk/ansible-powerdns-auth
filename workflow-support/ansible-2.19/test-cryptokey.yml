@@ -27,6 +27,8 @@
               type: A
               records:
                 - content: 192.168.1.1
+        metadata:
+          api_revtify: true
       register: result
 
     - ansible.builtin.assert:
