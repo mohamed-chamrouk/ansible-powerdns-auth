@@ -70,6 +70,11 @@
           active: true
       ignore_errors: true
       register: result
+    - shell: |
+        dig DNSKEY cryptokeys.example. +dnssec +multi @127.0.0.1
+      register: dig
+    - debug:
+        var: dig
     - debug:
         var: output
       vars:
