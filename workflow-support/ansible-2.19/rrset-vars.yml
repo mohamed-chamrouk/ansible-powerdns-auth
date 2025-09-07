@@ -105,6 +105,8 @@ rrsets:
         disabled: false
       - strings: "project=homelab env=dev"
         disabled: true
+
+rrsets_dnssec:
   - DNSKEY:
       - flags: 257
         protocol: 3

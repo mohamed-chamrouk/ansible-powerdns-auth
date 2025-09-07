@@ -113,18 +113,6 @@ def main():
             "required": True,
             "no_log": True,
         },
-        "algorithm": {
-            "type": "str",
-            "default": "hmac-md5",
-            "choices": [
-                "hmac-md5",
-                "hmac-sha1",
-                "hmac-sha224",
-                "hmac-sha256",
-                "hmac-sha384",
-                "hmac-sha512",
-            ],
-        },
         "keep": {
             "type": "bool",
             "default": False,
@@ -318,22 +306,6 @@ def main():
                 "disabled": {"type": "bool", "required": False, "default": False},
             },
         },
-        "RRSIG": {
-            "type": "list",
-            "elements": "dict",
-            "options": {
-                "type_covered": {"type": "str", "required": True},
-                "algorithm": {"type": "int", "required": True},
-                "labels": {"type": "int", "required": True},
-                "original_ttl": {"type": "int", "required": True},
-                "signature_expiration": {"type": "str", "required": True},
-                "signature_inception": {"type": "str", "required": True},
-                "key_tag": {"type": "int", "required": True},
-                "signer_name": {"type": "str", "required": True},
-                "signature": {"type": "str", "required": True},
-                "disabled": {"type": "bool", "required": False, "default": False},
-            },
-        },
         "SPF": {
             "type": "list",
             "elements": "dict",
@@ -426,7 +398,6 @@ def main():
         "NSEC3PARAM",
         "PTR",
         "RP",
-        "RRSIG",
         "SPF",
         "SOA",
         "SRV",
@@ -483,9 +454,12 @@ def main():
         rrset_records = [
             {
                 "type": type,
-                "records": [safe_string_record(
-                    type, record, {type: module_args[type] for type in record_types}
-                ) for record in params[type]],
+                "records": [
+                    safe_string_record(
+                        type, record, {type: module_args[type] for type in record_types}
+                    )
+                    for record in params[type]
+                ],
             }
             for type in rrset_record_types
         ]

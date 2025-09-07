@@ -16,8 +16,12 @@
         src: ./template/all-rrset-types.yml.j2
         dest: ./test-rrset-all-types.yml
 
-    - ansible.builtin.debug:
-        msg: "the value of foo.txt is {{ lookup('ansible.builtin.file', './test-rrset-all-types.yml') }}"
+    - name: Creating template for all rrset dnssec types
+      ansible.builtin.template:
+        src: ./template/all-rrset-types.yml.j2
+        dest: ./test-rrset-all-dnssec-types.yml
+      vars:
+        - "{{ rrsets = rrsets_dnssec }}"
 
     - name: check "Native" zone creation
       kpfleming.powerdns_auth.zone:
@@ -53,6 +57,10 @@
           - result.zone.metadata.axfr_source == "127.0.0.1"
 
   tasks:
-    - name: creating each type of supported DNS record
+    - name: check creating each type of supported DNS record
       ansible.builtin.include_tasks:
         file: test-rrset-all-types.yml
+
+    - name: check creating each type of supported DNS record
+      ansible.builtin.include_tasks:
+        file: test-rrset-all-dnssec-types.yml

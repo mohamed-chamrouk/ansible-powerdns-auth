@@ -1326,7 +1326,6 @@ def main():
             # state must be 'present'
             zone_id = None
     else:
-        #
         # get the full zone info and populate the result dict
         zone_id = partial_zone_info[0]["id"]
         api_zone_client.zone_id = zone_id
