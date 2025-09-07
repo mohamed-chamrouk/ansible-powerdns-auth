@@ -11,7 +11,8 @@
   pre_tasks:
     - name: Creating Native zone for cryptokeys tests
       kpfleming.powerdns_auth.zone:
-        <<: *common
+        name: cryptokeys.example.
+        api_key: foo
         state: present
         properties:
           kind: Native
