@@ -67,18 +67,13 @@
           active: true
       ignore_errors: true
       register: result
-    - name: rectifying zone
-      kpfleming.powerdns_auth.zone:
-        api_key: foo
+    - name: updating NS rrset
+      kpfleming.powerdns_auth.rrset:
+        <<: *common
         name: cryptokeys.example.
-        state: rectify
-      ignore_errors: true
-    #- name: creating A rrset
-    #  kpfleming.powerdns_auth.rrset:
-    #    <<: *common
-    #    name: cryptokeys.example.
-    #    A:
-    #      - address: 127.0.0.1
+        keep: true
+        NS:
+          - host: ns1.example.
     - name: get zone info
       kpfleming.powerdns_auth.zone:
         api_key: foo
