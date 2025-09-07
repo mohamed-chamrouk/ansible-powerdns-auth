@@ -7,6 +7,13 @@
     common_args: &common
       api_key: foo
       zone_name: cryptokeys.example.
+    refresh_task: &refresh
+      kpfleming.powerdns_auth.rrset:
+        api_key: foo
+        zone_name: cryptokeys.example.
+        name: cryptokeys.example.
+        NS:
+          - host: ns1.example.
 
   pre_tasks:
     - name: Creating Native zone for cryptokeys tests
@@ -67,13 +74,14 @@
           active: true
       ignore_errors: true
       register: result
-    - name: updating NS rrset to make DNSKEY available #(weird behavior, don't know what's happening)
-      kpfleming.powerdns_auth.rrset:
-        <<: *common
-        name: cryptokeys.example.
-        keep: true
-        NS:
-          - host: ns1.example.
+    #- name: updating NS rrset to make DNSKEY available #(weird behavior, don't know what's happening)
+    #  kpfleming.powerdns_auth.rrset:
+    #    <<: *common
+    #    name: cryptokeys.example.
+    #    keep: true
+    #    NS:
+    #      - host: ns1.example.
+    - <<: *refresh
     - ansible.builtin.assert:
         quiet: true
         that:
