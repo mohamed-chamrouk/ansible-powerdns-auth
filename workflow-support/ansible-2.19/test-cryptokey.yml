@@ -162,6 +162,13 @@
           - cryptokey.changed
           - not cryptokey.cryptokey.active
 
+    - name: deleting key for following tests
+      kpfleming.powerdns_auth.cryptokey:
+        <<: *common
+        state: absent
+        cryptokey_id: 1
+    - <<: *refresh
+
     - name: check activating key
       block:
         - kpfleming.powerdns_auth.cryptokey:
