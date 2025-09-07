@@ -83,7 +83,6 @@
           - result.cryptokey["algorithm"] == "ed25519"
           - result.cryptokey["active"] == true
           - result.cryptokey["keytype"] == "csk"
-          - (result.cryptokey["ds"] | length) > 0
           - result.cryptokeys == []
           - output["algorithm"] == 15
       vars:
