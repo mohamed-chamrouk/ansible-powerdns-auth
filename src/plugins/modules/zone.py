@@ -1341,11 +1341,11 @@ def main():
     if state == "exists":
         module.exit_json(**result)
 
-    if state == "rectify":
-        print("======================debug=====================")
-        api_zone_client.rectifyZone()
-        result["changed"] = True
-        module.exit_json(**result)
+    #if state == "rectify":
+    #    print("======================debug=====================")
+    #    api_zone_client.rectifyZone()
+    #    result["changed"] = True
+    #    module.exit_json(**result)
 
     # if absence was requested, remove the zone and exit
     if state == "absent":
