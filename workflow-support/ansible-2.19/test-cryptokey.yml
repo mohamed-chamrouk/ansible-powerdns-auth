@@ -167,7 +167,7 @@
         - kpfleming.powerdns_auth.cryptokey:
             <<: *common
             state: present
-            cryptokey_id: 3
+            cryptokey_id: 2
             cryptokey:
               active: true
           ignore_errors: true
@@ -175,7 +175,7 @@
         - kpfleming.powerdns_auth.cryptokey:
             <<: *common
             state: "exists"
-            cryptokey_id: 3
+            cryptokey_id: 2
           ignore_errors: true
           register: result_get
     - <<: *refresh
