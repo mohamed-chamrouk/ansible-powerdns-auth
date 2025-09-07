@@ -70,14 +70,11 @@
           active: true
       ignore_errors: true
       register: result
-    - shell: |
-        curl -sS -X GET \
-          -H 'X-API-Key: foo' \
-          -H 'Content-Type: application/json' \
-          http://127.0.0.1:8081/api/v1/servers/localhost/zones/cryptokeys.example.
-      register: dig
-    - debug:
-        var: dig
+    - name: get zone info
+      kpfleming.powerdns_auth.cryptokey:
+        api_key: foo
+        state: exists
+        name: cryptokeys.example.
     - debug:
         var: output
       vars:
