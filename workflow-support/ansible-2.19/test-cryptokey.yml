@@ -72,6 +72,7 @@
         api_key: foo
         name: cryptokeys.example.
         state: rectify
+      ignore_errors: true
     #- name: creating A rrset
     #  kpfleming.powerdns_auth.rrset:
     #    <<: *common
