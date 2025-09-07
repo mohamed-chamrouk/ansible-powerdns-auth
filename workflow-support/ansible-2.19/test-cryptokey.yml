@@ -71,7 +71,7 @@
       ignore_errors: true
       register: result
     - name: get zone info
-      kpfleming.powerdns_auth.cryptokey:
+      kpfleming.powerdns_auth.zone:
         api_key: foo
         state: exists
         name: cryptokeys.example.
