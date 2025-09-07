@@ -95,6 +95,13 @@
         cryptokey_id: 1
       ignore_errors: true
       register: result
+    - name: updating NS rrset to make DNSKEY available #(weird behavior, don't know what's happening)
+      kpfleming.powerdns_auth.rrset:
+        <<: *common
+        name: cryptokeys.example.
+        keep: true
+        NS:
+          - host: ns2.example.
     - debug:
         var: output
       vars:
