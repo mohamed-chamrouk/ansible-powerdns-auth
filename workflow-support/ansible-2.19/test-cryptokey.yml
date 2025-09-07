@@ -29,6 +29,7 @@
                 - content: 192.168.1.1
         metadata:
           api_rectify: true
+          soa_edit_api: INCEPTION-INCREMENT
       register: result
 
     - ansible.builtin.assert:
