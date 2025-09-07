@@ -78,8 +78,8 @@
           - result.cryptokey.algorithm == "ed25519"
           - result.cryptokey.active == true
           - result.cryptokey.keytype == "csk"
-          - output.algorithm == 15
-          - output.owner == "cryptokeys.example."
+          - output['algorithm'] == 15
+          - output['owner'] == "cryptokeys.example."
       vars:
         output: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=false, real_empty=false) }}"
 
