@@ -73,7 +73,7 @@
     - ansible.builtin.assert:
         quiet: true
         that:
-          - result.exception not defined
+          - result['exception'] not defined
           - not result.failed
           - result.cryptokey.algorithm == "ed25519"
           - result.cryptokey.active == true
