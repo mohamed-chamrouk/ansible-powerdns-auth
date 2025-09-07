@@ -38,7 +38,7 @@ DOCUMENTATION = '''
             - C(CAA) has been added in community.general 6.3.0.
         type: str
         default: 'A'
-        choices: [A, ALL, AAAA, CAA, CNAME, DNAME, DNSKEY, DS, HINFO, HTTPS, LOC, MX, NAPTR, NS, NSEC3PARAM, PTR, RP, RRSIG, SOA, SPF, SRV, SSHFP, SVCB, TLSA, TXT]
+        choices: [A, ALL, AAAA, CAA, CNAME, DNAME, DNSKEY, DS, HINFO, HTTPS, LOC, MX, NAPTR, NS, NSEC, NSEC3, NSEC3PARAM, PTR, RP, RRSIG, SOA, SPF, SRV, SSHFP, SVCB, TLSA, TXT]
       flat:
         description: If 0 each record is returned as a dictionary, otherwise a string.
         type: int
@@ -206,7 +206,7 @@ try:
     import dns.reversename
     import dns.rdataclass
     from dns.rdatatype import (A, AAAA, CAA, CNAME, DNAME, DNSKEY, DS, HINFO, HTTPS,
-                               LOC, MX, NAPTR, NS, NSEC3PARAM, PTR, RP, SOA, SPF, SRV,
+                               LOC, MX, NAPTR, NS, NSEC, NSEC3, NSEC3PARAM, PTR, RP, SOA, SPF, SRV,
                                SSHFP, SVCB, TLSA, TXT)
     HAVE_DNS = True
 except ImportError:
@@ -237,6 +237,8 @@ def make_rdata_dict(rdata):
         MX: ['preference', 'exchange'],
         NAPTR: ['order', 'preference', 'flags', 'service', 'regexp', 'replacement'],
         NS: ['target'],
+        NSEC: ['next_domain', 'type_bitmap'],
+        NSEC3: ['algorithm', 'flags', 'iterations', 'salt', 'next', 'type_bitmap'],
         NSEC3PARAM: ['algorithm', 'flags', 'iterations', 'salt'],
         PTR: ['target'],
         RP: ['mbox', 'txt'],
