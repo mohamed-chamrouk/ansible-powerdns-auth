@@ -57,8 +57,8 @@
           - result.cryptokey == {}
           - result.cryptokeys == []
           - lookup == ""
-        vars:
-          lookup: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=false, real_empty=false) }}"
+      vars:
+        lookup: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=false, real_empty=false) }}"
 
     - name: check generated key creation
       kpfleming.powerdns_auth.cryptokey:
@@ -81,8 +81,8 @@
           - (result.cryptokey["ds"] | length) == 3
           - (result.cryptokey["dnskey"] | length) > 0
           - lookup["algorithm"] == 15
-        vars:
-          lookup: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=false, real_empty=false) }}"
+      vars:
+        lookup: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=false, real_empty=false) }}"
 
     - name: check key deletion
       kpfleming.powerdns_auth.cryptokey:
@@ -99,8 +99,8 @@
           - result.cryptokey == {}
           - result.cryptokeys == []
           - lookup == ""
-        vars:
-          lookup: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=false, real_empty=false) }}"
+      vars:
+        lookup: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=false, real_empty=false) }}"
 
     - name: check imported key creation
       kpfleming.powerdns_auth.cryptokey:
@@ -125,8 +125,8 @@
           - (result.cryptokey["ds"] | length) > 0
           - lookup["key"] == "lMu/7quhLeSueMcdlt3T0sxln32yhrhASCKKDB1xJOk="
           - lookup["algorithm"] == 15
-        vars:
-          lookup: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=false, real_empty=false) }}"
+      vars:
+        lookup: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=false, real_empty=false) }}"
 
     - name: check listing of all keys
       block:
@@ -177,8 +177,8 @@
           - not result_get.failed
           - result_get.cryptokey.active == true
           - lookup["algorithm"] == 15
-        vars:
-          lookup: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=false, real_empty=false) }}"
+      vars:
+        lookup: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=false, real_empty=false) }}"
 
     - name: check operation on non-existent zone
       kpfleming.powerdns_auth.cryptokey:
