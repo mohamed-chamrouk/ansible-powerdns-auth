@@ -137,14 +137,23 @@
 
     - name: check listing of all keys
       block:
-        - kpfleming.powerdns_auth.cryptokey:
+        - name: creating key
+          kpfleming.powerdns_auth.cryptokey:
             <<: *common
             state: present
             cryptokey:
               keytype: ksk
               algorithm: ed25519
+        - name: creating key
+          kpfleming.powerdns_auth.cryptokey:
+            <<: *common
+            state: present
+            cryptokey:
+              keytype: zsk
+              algorithm: ed25519
           register: cryptokey
-        - kpfleming.powerdns_auth.cryptokey:
+        - name: getting keys
+          kpfleming.powerdns_auth.cryptokey:
             <<: *common
             state: "exists"
           ignore_errors: true
@@ -157,7 +166,7 @@
           - (result.cryptokeys | length) == 2
           - result.cryptokey == {}
     - ansible.builtin.set_fact:
-        last_id: "{{ cryptokey.cryptokey.id }}"
+        last_id: "{{ cryptokey.cryptokey['id'] }}"
 
     - name: check activating key
       block:
