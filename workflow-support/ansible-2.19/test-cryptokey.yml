@@ -152,7 +152,7 @@
           ignore_errors: true
           register: result
     - debug:
-        var: result
+        var: cryptokey
     - ansible.builtin.assert:
         quiet: true
         that:
