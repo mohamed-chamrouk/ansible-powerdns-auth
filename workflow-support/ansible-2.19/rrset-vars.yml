@@ -96,6 +96,7 @@ rrsets:
         disabled: true
 
 rrsets_dnssec:
+  # TODO: Add separate dnskey testing on playbook
   #  - DNSKEY:
   #      - flags: 257
   #        protocol: 3

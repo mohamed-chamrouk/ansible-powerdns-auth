@@ -46,7 +46,7 @@
     - name: check that there are no keys
       kpfleming.powerdns_auth.cryptokey:
         <<: *common
-        state: "exists"
+        state: exists
       ignore_errors: true
       register: result
     - ansible.builtin.assert:
@@ -63,7 +63,7 @@
     - name: check generated key creation
       kpfleming.powerdns_auth.cryptokey:
         <<: *common
-        state: "present"
+        state: present
         cryptokey:
           keytype: csk
           algorithm: ed25519
@@ -74,11 +74,20 @@
         var: output
       vars:
         output: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=false, real_empty=false) }}"
+    - name: check that there are no keys
+      kpfleming.powerdns_auth.cryptokey:
+        <<: *common
+        state: exists
+      ignore_errors: true
+      register: result
+    - debug:
+        var: result
     - ansible.builtin.assert:
         quiet: true
         that:
           - result['exception'] is not defined
           - not result.failed
+          - result.changed
           - result.cryptokey.algorithm == "ed25519"
           - result.cryptokey.active == true
           - result.cryptokey.keytype == "csk"
@@ -90,7 +99,7 @@
     - name: check key deletion
       kpfleming.powerdns_auth.cryptokey:
         <<: *common
-        state: "absent"
+        state: absent
         cryptokey_id: 1
       ignore_errors: true
       register: result
@@ -108,7 +117,7 @@
     - name: check imported key creation
       kpfleming.powerdns_auth.cryptokey:
         <<: *common
-        state: "present"
+        state: present
         cryptokey:
           keytype: zsk
           dnskey: "257 3 15 lMu/7quhLeSueMcdlt3T0sxln32yhrhASCKKDB1xJOk="
@@ -135,7 +144,7 @@
       block:
         - kpfleming.powerdns_auth.cryptokey:
             <<: *common
-            state: "present"
+            state: present
             cryptokey:
               keytype: ksk
               algorithm: ed25519
