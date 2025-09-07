@@ -160,7 +160,7 @@
           - (result.cryptokeys | length) == 2
           - result.cryptokey == {}
           - cryptokey.changed
-          - not cryptokey.active
+          - not cryptokey.cryptokey.active
 
     - name: check activating key
       block:
