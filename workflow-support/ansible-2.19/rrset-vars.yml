@@ -59,17 +59,6 @@ rrsets:
       - mbox: hostmaster.example.com.
         txt: admin-contact.
         disabled: false
-  - RRSIG:
-      - type_covered: "A"
-        algorithm: 8
-        labels: 2
-        original_ttl: 3600
-        signature_expiration: "20251231235959"
-        signature_inception: "20250101000000"
-        key_tag: 2371
-        signer_name: example.com.
-        signature: QWxhZGRpbjpvcGVuIHNlc2FtZQ==
-        disabled: false
   - SPF:
       - strings: "v=spf1 ip4:192.0.2.0/24 include:_spf.example.net ~all"
         disabled: false
