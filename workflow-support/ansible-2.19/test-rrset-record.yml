@@ -16,12 +16,13 @@
         src: ./template/all-rrset-types.yml.j2
         dest: ./test-rrset-all-types.yml
 
+    - set_fact:
+        rrsets: "{{ rrsets_dnssec }}"
+
     - name: Creating template for all rrset dnssec types
       ansible.builtin.template:
         src: ./template/all-rrset-types.yml.j2
         dest: ./test-rrset-all-dnssec-types.yml
-      vars:
-        - "{{ rrsets = rrsets_dnssec }}"
 
     - name: check "Native" zone creation
       kpfleming.powerdns_auth.zone:
