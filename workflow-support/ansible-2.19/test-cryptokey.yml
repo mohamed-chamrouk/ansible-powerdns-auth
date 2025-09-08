@@ -195,8 +195,8 @@
 
     - name: check operation on non-existent zone
       kpfleming.powerdns_auth.cryptokey:
-        apikey: foo
-        zone_name: non-existatnt.example.
+        api_key: foo
+        zone_name: non-existant.example.
         state: exists
       ignore_errors: true
       register: result
@@ -205,6 +205,7 @@
         that:
           - result['exception'] is defined
           - result.failed
+          - result.msg == "No zone found for name non-existant.example."
 
     - name: check imported key with wrong parameters
       kpfleming.powerdns_auth.cryptokey:
@@ -221,8 +222,9 @@
         that:
           - result['exception'] is defined
           - result.failed
+          - result.msg == "Wrong options provided for cryptokey creation"
 
-    - name: check imported key with wrong parameters
+    - name: check missing keytype
       kpfleming.powerdns_auth.cryptokey:
         <<: *common
         state: present
@@ -236,6 +238,7 @@
         that:
           - result['exception'] is defined
           - result.failed
+          - result.msg == "Missing keytype option in cryptokey definition"
 
     - name: check non-existent key deletion
       kpfleming.powerdns_auth.cryptokey:
@@ -249,3 +252,4 @@
         that:
           - result['exception'] is defined
           - result.failed
+          - result.msg == "Key of id 100 not found for zone cryptokeys.example."
