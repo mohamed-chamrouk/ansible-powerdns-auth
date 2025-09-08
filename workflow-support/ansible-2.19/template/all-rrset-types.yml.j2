@@ -2,9 +2,14 @@
 {% set rrset_type = rrset.keys() | first %}
 - name: Creating rrset of type {{ rrset_type }}
   kpfleming.powerdns_auth.rrset:
+    {% if rrset_type != "DS" %}
+        {% set name = "t." ~ rrset_type ~ ".rrset.example." %}
+    {% else %}
+        {% set name = "rrset.example." %}
+    {% endif %}
     {% set params = {
         "zone_name": "rrset.example.",
-        "name": "t." ~ rrset_type ~ ".rrset.example.",
+        "name": name,
         "state": "present",
         "api_key": api_key
         }
