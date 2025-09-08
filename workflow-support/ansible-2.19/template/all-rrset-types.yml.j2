@@ -25,5 +25,5 @@
       - result.changed
       - rrset != "NXDOMAIN"
   vars:
-    rrset: "{% raw %}{{ lookup('dig_local', 't.{% endraw %}{{ rrset_type }}{% raw %}.rrset.example.', qtype='{% endraw %}{{ rrset_type }}{% raw %}', flat=0, fail_on_error=false, real_empty=false) }}{% endraw %}"
+    rrset: "{% raw %}{{ lookup('dig_local', '{% endraw %}{{ name }}{% raw %}', qtype='{% endraw %}{{ rrset_type }}{% raw %}', flat=0, fail_on_error=false, real_empty=false) }}{% endraw %}"
 {% endfor %}
