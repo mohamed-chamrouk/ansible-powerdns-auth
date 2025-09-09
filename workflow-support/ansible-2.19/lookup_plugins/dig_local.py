@@ -237,7 +237,7 @@ def make_rdata_dict(rdata):
         MX: ['preference', 'exchange'],
         NAPTR: ['order', 'preference', 'flags', 'service', 'regexp', 'replacement'],
         NS: ['target'],
-        NSEC: ['next_domain', 'type_bitmap'],
+        NSEC: ['next', 'windows'],
         NSEC3: ['algorithm', 'flags', 'iterations', 'salt', 'next', 'type_bitmap'],
         NSEC3PARAM: ['algorithm', 'flags', 'iterations', 'salt'],
         PTR: ['target'],
