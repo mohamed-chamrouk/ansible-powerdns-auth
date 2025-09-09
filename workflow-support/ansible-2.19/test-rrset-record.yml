@@ -159,9 +159,9 @@
           - result['exception'] is not defined
           - not result.failed
           - not result.changed
-          - dig['target'] == "ns1.example.com."
-          - dig['ttl'] == 3600
-          - dig['owner'] == "rrset.example."
+          - (dig | map(attribute='target') | list) == ["ns1.example.com."]
+          - (dig | map(attribute='ttl') | list) == [3600]
+          - (dig | map('owner') | list) == ["rrset.example."]
       vars:
         dig: "{{ query('dig_local', 't.NS.rrset.example.', qtype='NS', flat=0, fail_on_error=false, real_empty=false) }}"
 
