@@ -108,6 +108,10 @@
         A:
           - address: 10.0.0.1
       register: result
+    - debug:
+        var: dig
+      vars:
+        dig: "{{ query('dig_local', 't.a.rrset.example.', qtype='A', flat=0, fail_on_error=false, real_empty=false) }}"
     - ansible.builtin.assert:
         quiet: true
         that:
