@@ -259,7 +259,7 @@
         state: exists
       register: result
     - debug:
-        var: result
+        msg: "{{ result['rrsets'] | length }} : {{ result }}"
 
     - name: check listing all rrsets of a given type
       kpfleming.powerdns_auth.rrset:
