@@ -161,9 +161,30 @@
           - not result.changed
           - (dig | map(attribute='target') | list) == ["ns1.example.com."]
           - (dig | map(attribute='ttl') | list) == [3600]
-          - (dig | map('owner') | list) == ["rrset.example."]
+          - (dig | map(attribute='owner') | list) == ["rrset.example."]
       vars:
         dig: "{{ query('dig_local', 'rrset.example.', qtype='NS', flat=0, fail_on_error=false, real_empty=false) }}"
+
+    - name: check deleting non-existant record from existing rrset
+      kpfleming.powerdns_auth.rrset:
+        <<: *common
+        state: absent
+        name: t.cname.rrset.example.
+        keep: true
+        CNAME:
+          - cname: app1.example.com
+      register: result
+    - ansible.builtin.assert:
+        quiet: true
+        that:
+          - result['exception'] is not defined
+          - not result.failed
+          - not result.changed
+          - (dig | map(attribute='target') | list) == ["app.example.com"]
+          - (dig | map(attribute='ttl') | list) == [3600]
+          - (dig | map(attribute='owner') | list) == ["t.cname.rrset.example."]
+      vars:
+        dig: "{{ query('dig_local', 't.cname.rrset.example.', qtype='CNAME', flat=0, fail_on_error=false, real_empty=false) }}"
 
     - name: check deleting non-existant rrset
       kpfleming.powerdns_auth.rrset:
