@@ -296,19 +296,6 @@ def main():
                 "disabled": {"type": "bool", "required": False, "default": False},
             },
         },
-        "NSEC3": {
-            "type": "list",
-            "elements": "dict",
-            "options": {
-                "hash_algorithm": {"type": "int", "required": True, "choices": [1]},
-                "flags": {"type": "int", "required": True, "choices": [0, 1]},
-                "iterations": {"type": "int", "required": True},
-                "salt": {"type": "str", "required": True},
-                "next_hashed": {"type": "str", "required": True},
-                "type_bitmap": {"type": "str", "required": True},
-                "disabled": {"type": "bool", "required": False, "default": False},
-            },
-        },
         "NSEC3PARAM": {
             "type": "list",
             "elements": "dict",
@@ -425,7 +412,6 @@ def main():
         "NAPTR",
         "NS",
         "NSEC",
-        "NSEC3",
         "NSEC3PARAM",
         "PTR",
         "RP",

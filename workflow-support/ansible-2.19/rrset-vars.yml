@@ -110,14 +110,6 @@ rrsets_dnssec:
       - next_domain: next.example.com.
         type_bitmap: "A AAAA RRSIG NSEC"
         disabled: false
-  - NSEC3:
-      - hash_algorithm: 1
-        flags: 1
-        iterations: 10
-        salt: A1B2C3D4
-        next_hashed: 3P5L4Q0C7N2J8K1M
-        type_bitmap: "A AAAA RRSIG NSEC3"
-        disabled: false
   - NSEC3PARAM:
       - hash_algorithm: 1
         flags: 0
