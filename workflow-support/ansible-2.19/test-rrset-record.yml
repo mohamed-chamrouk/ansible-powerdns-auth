@@ -65,6 +65,7 @@
       kpfleming.powerdns_auth.rrset:
         <<: *common
         state: absent
+        name: t.HINFO.rrset.example.
         type: HINFO
       register: result
     - ansible.builtin.assert:
