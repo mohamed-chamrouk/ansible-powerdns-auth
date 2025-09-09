@@ -106,7 +106,7 @@
         name: t.A.rrset.example.
         keep: true
         A:
-          - addres: 10.0.0.1
+          - address: 10.0.0.1
       register: result
     - ansible.builtin.assert:
         quiet: true
