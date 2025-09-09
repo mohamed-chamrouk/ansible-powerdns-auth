@@ -94,8 +94,8 @@
           - result['exception'] is not defined
           - not result.failed
           - result.changed
-          - (dig | map('address') | list) == ["2001:db8::0"]
-          - (dig | map('ttl') | list) == [7200]
+          - (dig | map(attribute='address') | list) == ["2001:db8::0"]
+          - (dig | map(attribute='ttl') | list) == [7200]
       vars:
         dig: "{{ query('dig_local', 't.aaaa.rrset.example.', qtype='AAAA', flat=0, fail_on_error=false, real_empty=false) }}"
 
