@@ -88,20 +88,16 @@
         records:
           - content: 2001:db8::0
       register: result
-    - debug:
-        var: dig
-      vars:
-        dig: "{{ query('dig_local', 't.aaaa.rrset.example.', qtype='AAAA', flat=1, fail_on_error=false, real_empty=false) }}"
     - ansible.builtin.assert:
         quiet: true
         that:
           - result['exception'] is not defined
           - not result.failed
           - result.changed
-          - dig['address'].lower() == "2001:db8::0"
-          - dig['ttl'] == 7200
+          - (dig | map('address') | list) == ["2001:db8::0"]
+          - (dig | map('ttl') | list) == [7200]
       vars:
-        dig: "{{ query('dig_local', 't.aaaa.rrset.example.', qtype='AAAA', flat=1, fail_on_error=false, real_empty=false) }}"
+        dig: "{{ query('dig_local', 't.aaaa.rrset.example.', qtype='AAAA', flat=0, fail_on_error=false, real_empty=false) }}"
 
     - name: check updating existing rrset and keeping records
       kpfleming.powerdns_auth.rrset:
