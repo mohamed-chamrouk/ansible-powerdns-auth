@@ -53,13 +53,13 @@
           - result.zone.account == "test-account1"
 
   tasks:
-    #- name: check creating each type of supported DNS record
-    #  ansible.builtin.include_tasks:
-    #    file: test-rrset-all-types.yml
-
-    - name: check creating each type of supported DNSSEC record
+    - name: check creating each type of supported DNS record
       ansible.builtin.include_tasks:
-        file: test-rrset-all-dnssec-types.yml
+        file: test-rrset-all-types.yml
+
+    #- name: check creating each type of supported DNSSEC record
+    #  ansible.builtin.include_tasks:
+    #    file: test-rrset-all-dnssec-types.yml
 
     - name: check deleting existing rrset
       kpfleming.powerdns_auth.rrset:
