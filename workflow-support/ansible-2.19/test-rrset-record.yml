@@ -9,6 +9,9 @@
   vars:
     ansible_python_interpreter: python
     api_key: foo
+    common_args: &common
+      api_key: foo
+      zone_name: rrset.example.
 
   pre_tasks:
     - name: Creating template for all rrset types
@@ -37,11 +40,6 @@
           soa:
             mname: localhost.
             rname: hostmaster.localhost.
-        metadata:
-          allow_axfr_from:
-            - AUTO-NS
-          ixfr: true
-          axfr_source: 127.0.0.1
       register: result
 
     - ansible.builtin.assert:
@@ -53,15 +51,170 @@
           - result.zone.name == "rrset.example."
           - result.zone.kind == "Native"
           - result.zone.account == "test-account1"
-          - result.zone.metadata.allow_axfr_from[0] == "AUTO-NS"
-          - result.zone.metadata.ixfr
-          - result.zone.metadata.axfr_source == "127.0.0.1"
 
   tasks:
     - name: check creating each type of supported DNS record
       ansible.builtin.include_tasks:
         file: test-rrset-all-types.yml
 
-    - name: check creating each type of supported DNS record
+    - name: check creating each type of supported DNSSEC record
       ansible.builtin.include_tasks:
         file: test-rrset-all-dnssec-types.yml
+
+    - name: check deleting existing rrset
+      kpfleming.powerdns_auth.rrset:
+        <<: *common
+        state: absent
+        type: HINFO
+      register: result
+    - ansible.builtin.assert:
+        quiet: true
+        that:
+          - result['exception'] is not defined
+          - not result.failed
+          - result.changed
+          - dig == ""
+      vars:
+        dig: "{{ query('dig_local', 't.HINFO.rrset.example.', qtype='HINFO', flat=1, fail_on_error=false, real_empty=false) }}"
+
+    - name: check updating existing rrset by replacing all records
+      kpfleming.powerdns_auth.rrset:
+        <<: *common
+        state: present
+        name: t.AAAA.rrset.example
+        type: AAAA
+        ttl: 7200
+        records:
+          - content: 2001:db8::0
+      register: result
+    - ansible.builtin.assert:
+        quiet: true
+        that:
+          - result['exception'] is not defined
+          - not result.failed
+          - result.changed
+          - dig['address'].lower() == "2001:db8::0"
+          - dig['ttl'] == 7200
+      vars:
+        dig: "{{ query('dig_local', 't.AAAA.rrset.example.', qtype='AAAA', flat=1, fail_on_error=false, real_empty=false) }}"
+
+    - name: check updating existing rrset and keeping records
+      kpfleming.powerdns_auth.rrset:
+        <<: *common
+        state: present
+        name: t.A.rrset.example
+        keep: true
+        A:
+          - addres: 10.0.0.1
+      register: result
+    - ansible.builtin.assert:
+        quiet: true
+        that:
+          - result['exception'] is not defined
+          - not result.failed
+          - result.changed
+          - (dig | sort(attribute='address') | map(attribute='address') | list) == ["192.168.1.1", "10.0.0.1"]
+          - (dig | map(attribute='ttl') | list) == [3600, 3600]
+      vars:
+        dig: "{{ query('dig_local', 't.A.rrset.example.', qtype='A', flat=0, fail_on_error=false, real_empty=false) }}"
+
+    - name: check deleting some of records in exisitng rrset
+      kpfleming.powerdns_auth.rrset:
+        <<: *common
+        state: absent
+        name: t.TXT.rrset.example
+        keep: true
+        TXT:
+          - strings: "project=powerdns env=dev"
+      register: result
+    - ansible.builtin.assert:
+        quiet: true
+        that:
+          - result['exception'] is not defined
+          - not result.failed
+          - result.changed
+          - dig['strings'][0]['__ansible_unsafe'] == "project=powerdns env=dev"
+          - dig['ttl'] == 3600
+          - dig['owner'] == "t.TXT.rrset.example."
+      vars:
+        dig: "{{ query('dig_local', 't.TXT.rrset.example.', qtype='TXT', flat=1, fail_on_error=false, real_empty=false) }}"
+
+    - name: check updating existing rrset with same content
+      kpfleming.powerdns_auth.rrset:
+        <<: *common
+        state: present
+        name: t.NS.rrset.example
+        keep: true
+        NS:
+          - host: ns1.example.com.
+      register: result
+    - ansible.builtin.assert:
+        quiet: true
+        that:
+          - result['exception'] is not defined
+          - not result.failed
+          - not result.changed
+          - dig['target'] == "ns1.example.com."
+          - dig['ttl'] == 3600
+          - dig['owner'] == "t.NS.rrset.example."
+      vars:
+        dig: "{{ query('dig_local', 't.NS.rrset.example.', qtype='NS', flat=1, fail_on_error=false, real_empty=false) }}"
+
+    - name: check deleting non-existant rrset
+      kpfleming.powerdns_auth.rrset:
+        <<: *common
+        state: absent
+        name: t.NX.rrset.example
+        type: A
+      register: result
+    - ansible.builtin.assert:
+        quiet: true
+        that:
+          - result['exception'] is defined
+          - result.failed
+          - not result.changed
+
+    - name: check operation on non-existant zone
+      kpfleming.powerdns_auth.rrset:
+        api_key: foo
+        zone_name: NS.example.
+        state: absent
+        name: t.NX.rrset.example
+        type: A
+      register: result
+    - ansible.builtin.assert:
+        quiet: true
+        that:
+          - result['exception'] is defined
+          - result.failed
+          - not result.changed
+
+    - name: check missing options
+      kpfleming.powerdns_auth.rrset:
+        <<: *common
+        state: present
+        name: t.A.rrset.example
+        keep: true
+      register: result
+    - ansible.builtin.assert:
+        quiet: true
+        that:
+          - result['exception'] is defined
+          - result.failed
+          - not result.changed
+
+    - name: check missing options in rrset
+      kpfleming.powerdns_auth.rrset:
+        <<: *common
+        state: present
+        name: t.NAPTR.rrset.example
+        keep: true
+        NAPTR:
+          - order: 2
+      register: result
+    - ansible.builtin.assert:
+        quiet: true
+        that:
+          - result['exception'] is defined
+          - result.failed
+          - not result.changed

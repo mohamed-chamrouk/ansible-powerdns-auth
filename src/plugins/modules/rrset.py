@@ -57,15 +57,47 @@ class APIZoneRRSetWrapper(APIWrapper):
             **kwargs,
         ).result()
 
-
-def build_zone_result(api_client):
-    api_zone = api_client.listZone()
-    z = {
-        "exists": True,
-        **api_zone,
+def get_result_rrsets(rrsets, rrset_name, rrset_type):
+    r = {
+        "rrsets": rrsets,
     }
 
-    return api_zone, z
+    if rrset_name is not None:
+        if rrset_type is not None:
+            r = {
+                "exists": False,
+                "rrset": {},
+            }
+            for rrset in rrsets:
+                if rrset["name"] == rrset_name and rrset["type"] == rrset_type:
+                    r = {
+                        "exists": True,
+                        "rrset": rrset,
+                    }
+        else:
+            r = {
+                "exists": False,
+                "rrsets": [],
+            }
+            for rrset in rrsets:
+                if rrset["name"] == rrset_name:
+                    r["rrsets"] += [rrset]
+                    r["exists"] = True
+    elif rrset_type is not None:
+            r = {
+                "exists": False,
+                "rrsets": [],
+            }
+            for rrset in rrsets:
+                if rrset["type"] == rrset_type:
+                    r["rrsets"] += [rrset]
+                    r["exists"] = True
+
+    return r
+
+
+def get_rrsets(api_client):
+    return api_client.listZone()["rrsets"]
 
 
 def safe_string_record(record_type, record, type_def):
@@ -86,11 +118,10 @@ def main():
         "state": {
             "type": "str",
             "default": "present",
-            "choices": ["present", "absent"],
+            "choices": ["present", "absent", "exists"],
         },
         "name": {
             "type": "str",
-            "required": True,
         },
         "zone_name": {
             "type": "str",
@@ -412,8 +443,10 @@ def main():
         supports_check_mode=True,
         mutually_exclusive=[(record_type, "records") for record_type in record_types]
         + [(record_type, "type") for record_type in record_types],
-        required_one_of=[record_types + ["type"]],
-        required_if=[("state", "absent", record_types + ["type"], True)],
+        required_if=[("state", "absent", record_types + ["type"], True),
+            ("state", "present", ["name"]),
+            ("state", "absent", ["name"]),
+            ("state", "present", record_types+["type"], True)],
     )
 
     state = module.params["state"]
@@ -435,14 +468,25 @@ def main():
 
     if len(partial_zone_info) == 0:
         module.fail_json(f"Failed to find zone named {zone_name}")
-    else:
-        # get the full zone info and populate the result dict
-        zone_id = partial_zone_info[0]["id"]
-        api_client.zone_id = zone_id
-        zone_info, result["zone"] = build_zone_result(api_client)
 
+    # get the full zone info and populate the result dict
+    zone_id = partial_zone_info[0]["id"]
+    api_client.zone_id = zone_id
     params = module.params
-    changetype = "REPLACE" if params["state"] == "present" else "DELETE"
+
+    result.update({
+        "name": params["name"],
+        "zone_name": params["zone_name"]
+    })
+
+    zone_rrsets = get_rrsets(api_client)
+    result_rrsets = get_result_rrsets(zone_rrsets, params["name"], params["type"])
+
+    if state == "exists":
+        result.update(result_rrsets)
+        module.exit_json(**result)
+
+    changetype = "REPLACE" if state == "present" else "DELETE"
     rrset_record_types = list(set([p for p in params if params[p] is not None]) & set(record_types))
 
     # Check couldn't fit in AnsibleModule args
@@ -497,7 +541,6 @@ def main():
         ]
 
     zone_struct = {}
-    print(rrsets_struct)
 
     for rrset in rrsets_struct:
         # Retrieving existing rrset, there can only be one
@@ -505,7 +548,7 @@ def main():
         existing_rrset = next(
             (
                 r
-                for r in zone_info["rrsets"]
+                for r in zone_rrsets
                 if r["name"] == rrset["name"] and r["type"] == rrset["type"]
             ),
             None,
@@ -567,12 +610,18 @@ def main():
                     }
                 )
 
+    if len(zone_struct["rrsets"]) == 1:
+        result["rrset"] = zone_struct["rrsets"][0]
+    elif len(zone_struct["rrsets"]) >= 1:
+        result["rrsets"] = zone_struct["rrsets"]
+
     if module.check_mode:
         module.exit_json(**result)
 
     if zone_struct:
         api_client.patchZone(zone_struct=zone_struct)
         result["changed"] = True
+        result["rrsets"] = get_rrsets(api_client)
 
     module.exit_json(**result)
 

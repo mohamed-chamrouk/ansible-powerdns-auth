@@ -92,8 +92,8 @@ rrsets:
   - TXT:
       - strings: "v=verify1 abc123"
         disabled: false
-      - strings: "project=homelab env=dev"
-        disabled: true
+      - strings: "project=powerdns env=dev"
+        disabled: false
 
 rrsets_dnssec:
   - DNSKEY:
