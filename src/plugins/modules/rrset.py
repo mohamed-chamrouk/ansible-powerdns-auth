@@ -546,7 +546,8 @@ def main():
         )  # Keeping the option out for cleaner zone_struct on subsequent unpacking
 
         print(f"=============={rrset["records"]}==============")
-        print(f"=============={existing_rrset["records"]}==============")
+        if existing_rrset :
+            print(f"=============={existing_rrset["records"]}==============")
 
         if not existing_rrset or not rrset_keep:
             if rrset_changetype == "REPLACE":
