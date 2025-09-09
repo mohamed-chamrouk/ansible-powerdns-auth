@@ -30,6 +30,7 @@
 {% else %}
       - rrset["type"] == {% raw %}"{{ rrset | map(attribute='type') | unique | list }} == [3600]"{% endraw %}
       - rrset["owner"] == {% raw %}"{{ rrset | map(attribute='owner') | unique | list }} == ['{% endraw %}{{ name }}{% raw %}']"{% endraw %}
+{% endif %}
   vars:
     rrset: "{% raw %}{{ lookup('dig_local', '{% endraw %}{{ name }}{% raw %}', qtype='{% endraw %}{{ rrset_type }}{% raw %}', flat=0, fail_on_error=false, real_empty=false) }}{% endraw %}"
 {% endfor %}
