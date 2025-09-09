@@ -134,9 +134,9 @@
           - result['exception'] is not defined
           - not result.failed
           - result.changed
-          - dig['strings'][0]['__ansible_unsafe'] == "project=powerdns env=dev"
-          - dig['ttl'] == 3600
-          - dig['owner'] == "t.txt.rrset.example."
+          - ( dig | map(attribute='strings' | list | first)['__ansible_unsafe'] == "project=powerdns env=dev"
+          - ( dig | map(attribute='ttl') | list) == [3600]
+          - (dig | map(attribute='owner') | list) == ["t.txt.rrset.example."]
       vars:
         dig: "{{ query('dig_local', 't.txt.rrset.example.', qtype='TXT', flat=0, fail_on_error=false, real_empty=false) }}"
 
