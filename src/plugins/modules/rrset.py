@@ -504,7 +504,7 @@ def main():
 
             rrsets_struct += [
                 {
-                    "name": params["name"],
+                    "name": params["name"].lower(),
                     "type": rrset["type"],
                     "ttl": params["ttl"],
                     "keep": params["keep"],
@@ -517,7 +517,7 @@ def main():
     else:
         rrsets_struct = [
             {
-                "name": params["name"],
+                "name": params["name"].lower(),
                 "type": params["type"],
                 "ttl": params["ttl"],
                 "keep": params["keep"],
