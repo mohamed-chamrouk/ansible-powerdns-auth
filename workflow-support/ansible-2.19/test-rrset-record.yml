@@ -138,7 +138,7 @@
           - result['exception'] is not defined
           - not result.failed
           - result.changed
-          - (dig | map(attribute='strings') | list | first) == ['v=verify1 abc123']
+          - (dig | map(attribute='strings') | list | first) == ['"v=verify1 abc123"']
           - (dig | map(attribute='ttl') | list) == [3600]
           - (dig | map(attribute='owner') | list) == ["t.txt.rrset.example."]
       vars:
