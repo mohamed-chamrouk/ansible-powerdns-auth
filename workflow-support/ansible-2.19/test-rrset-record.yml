@@ -302,8 +302,13 @@
         state: exists
         type: RRSIG
       register: result
-    - debug:
-        var: result
+    - ansible.builtin.assert:
+        quiet: true
+        that:
+          - result['exception'] is not defined
+          - not result.failed
+          - not result.changed
+          - not result.exists
 
     - name: check listing all rrsets
       kpfleming.powerdns_auth.rrset:
@@ -311,5 +316,10 @@
         state: exists
         name: bob.example.
       register: result
-    - debug:
-        var: result
+    - ansible.builtin.assert:
+        quiet: true
+        that:
+          - result['exception'] is not defined
+          - not result.failed
+          - not result.changed
+          - not result.exists
