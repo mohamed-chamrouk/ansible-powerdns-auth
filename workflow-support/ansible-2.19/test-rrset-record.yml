@@ -171,6 +171,7 @@
         state: absent
         name: t.NX.rrset.example.
         type: A
+      ignore_errors: true
       register: result
     - ansible.builtin.assert:
         quiet: true
@@ -186,6 +187,7 @@
         state: absent
         name: t.A.rrset.example.
         type: A
+      ignore_errors: true
       register: result
     - ansible.builtin.assert:
         quiet: true
@@ -200,6 +202,7 @@
         state: present
         name: t.A.rrset.example.
         keep: true
+      ignore_errors: true
       register: result
     - ansible.builtin.assert:
         quiet: true
@@ -216,6 +219,7 @@
         keep: true
         NAPTR:
           - order: 2
+      ignore_errors: true
       register: result
     - ansible.builtin.assert:
         quiet: true
