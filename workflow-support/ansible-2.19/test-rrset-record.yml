@@ -68,18 +68,13 @@
         name: t.hinfo.rrset.example.
         type: HINFO
       register: result
-    - debug:
-        var: dig
-      vars:
-        dig: "{{ query('dig_local', 't.hinfo.rrset.example.', qtype='HINFO', flat=1, fail_on_error=false, real_empty=false) }}"
-
     - ansible.builtin.assert:
         quiet: true
         that:
           - result['exception'] is not defined
           - not result.failed
           - result.changed
-          - dig == ""
+          - dig == "NXDOMAIN"
       vars:
         dig: "{{ query('dig_local', 't.hinfo.rrset.example.', qtype='HINFO', flat=1, fail_on_error=false, real_empty=false) }}"
 
