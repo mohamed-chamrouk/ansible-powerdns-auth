@@ -27,8 +27,10 @@
 {% if (rrset.values() | list | first | length) == 1 %}
       - rrset["type"] == "{{ rrset_type }}"
       - rrset["owner"] == "{{ name }}"
+      - rrset["ttl"] == 3600
 {% else %}
-      - ( rrset | map(attribute='type') | unique | list ) == [3600]
+      - ( rrset | map(attribute='type') | unique | list ) == ["{{ rrset_type }}"]
+      - ( rrset | map(attribute='ttl') | unique | list ) == [3600]
       - ( rrset | map(attribute='owner') | unique | list ) == ["{{ name }}"]
 {% endif %}
   vars:
