@@ -82,7 +82,7 @@
       kpfleming.powerdns_auth.rrset:
         <<: *common
         state: present
-        name: t.aaaa.rrset.example
+        name: t.aaaa.rrset.example.
         type: AAAA
         ttl: 7200
         records:
@@ -103,7 +103,7 @@
       kpfleming.powerdns_auth.rrset:
         <<: *common
         state: present
-        name: t.A.rrset.example
+        name: t.A.rrset.example.
         keep: true
         A:
           - addres: 10.0.0.1
@@ -123,7 +123,7 @@
       kpfleming.powerdns_auth.rrset:
         <<: *common
         state: absent
-        name: t.TXT.rrset.example
+        name: t.TXT.rrset.example.
         keep: true
         TXT:
           - strings: "project=powerdns env=dev"
@@ -144,7 +144,7 @@
       kpfleming.powerdns_auth.rrset:
         <<: *common
         state: present
-        name: t.NS.rrset.example
+        name: t.NS.rrset.example.
         keep: true
         NS:
           - host: ns1.example.com.
@@ -165,7 +165,7 @@
       kpfleming.powerdns_auth.rrset:
         <<: *common
         state: absent
-        name: t.NX.rrset.example
+        name: t.NX.rrset.example.
         type: A
       register: result
     - ansible.builtin.assert:
@@ -180,7 +180,7 @@
         api_key: foo
         zone_name: NS.example.
         state: absent
-        name: t.NX.rrset.example
+        name: t.A.rrset.example.
         type: A
       register: result
     - ansible.builtin.assert:
@@ -194,7 +194,7 @@
       kpfleming.powerdns_auth.rrset:
         <<: *common
         state: present
-        name: t.A.rrset.example
+        name: t.A.rrset.example.
         keep: true
       register: result
     - ansible.builtin.assert:
@@ -208,7 +208,7 @@
       kpfleming.powerdns_auth.rrset:
         <<: *common
         state: present
-        name: t.NAPTR.rrset.example
+        name: t.NAPTR.rrset.example.
         keep: true
         NAPTR:
           - order: 2
