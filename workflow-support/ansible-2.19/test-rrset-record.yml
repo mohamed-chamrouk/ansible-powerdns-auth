@@ -144,29 +144,15 @@
       vars:
         dig: "{{ query('dig_local', 't.txt.rrset.example.', qtype='TXT', flat=0, fail_on_error=false, real_empty=false) }}"
 
-    - kpfleming.powerdns_auth.rrset:
-        <<: *common
-        state: exists
-        type: NS
-      register: result
-    - debug:
-        var: result
     - name: check updating existing rrset with same content
       kpfleming.powerdns_auth.rrset:
         <<: *common
         state: present
-        name: t.NS.rrset.example.
+        name: rrset.example.
         keep: true
         NS:
           - host: ns1.example.com.
       register: result
-    - kpfleming.powerdns_auth.rrset:
-        <<: *common
-        state: exists
-        type: NS
-      register: result
-    - debug:
-        var: result
     - ansible.builtin.assert:
         quiet: true
         that:
@@ -175,7 +161,7 @@
           - not result.changed
           - dig['target'] == "ns1.example.com."
           - dig['ttl'] == 3600
-          - dig['owner'] == "t.NS.rrset.example."
+          - dig['owner'] == "rrset.example."
       vars:
         dig: "{{ query('dig_local', 't.NS.rrset.example.', qtype='NS', flat=0, fail_on_error=false, real_empty=false) }}"
 
