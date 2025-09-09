@@ -258,8 +258,13 @@
         <<: *common
         state: exists
       register: result
-    - debug:
-        msg: "{{ result['rrsets'] | length }} : {{ result }}"
+    - ansible.builtin.assert:
+        quiet: true
+        that:
+          - result['exception'] is not defined
+          - not result.failed
+          - not result.changed
+          - (result['rrsets'] | length) == 22
 
     - name: check listing all rrsets of a given type
       kpfleming.powerdns_auth.rrset:
@@ -267,14 +272,44 @@
         state: exists
         type: A
       register: result
-    - debug:
-        var: result
+    - ansible.builtin.assert:
+        quiet: true
+        that:
+          - result['exception'] is not defined
+          - not result.failed
+          - not result.changed
+          - result.exists
+          - (result.rrsets | map(attribute='type') | unique | list) == ["A"]
 
     - name: check listing all rrsets of a given name
       kpfleming.powerdns_auth.rrset:
         <<: *common
         state: exists
         name: rrset.example.
+      register: result
+    - ansible.builtin.assert:
+        quiet: true
+        that:
+          - result['exception'] is not defined
+          - not result.failed
+          - not result.changed
+          - result.exists
+          - (result.rrsets | map(attribute='name') | unique | list) == ["rrset.example."]
+
+    - name: check listing all rrsets
+      kpfleming.powerdns_auth.rrset:
+        <<: *common
+        state: exists
+        type: RRSIG
+      register: result
+    - debug:
+        var: result
+
+    - name: check listing all rrsets
+      kpfleming.powerdns_auth.rrset:
+        <<: *common
+        state: exists
+        name: bob.example.
       register: result
     - debug:
         var: result
