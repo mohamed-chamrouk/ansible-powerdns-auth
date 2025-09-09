@@ -24,6 +24,8 @@
       - not result.failed
       - result.changed
       - rrset != "NXDOMAIN"
+      - rrset["type"] == {{ rrset_type }}
+      - rrset["owner"] == {{ name }}
   vars:
     rrset: "{% raw %}{{ lookup('dig_local', '{% endraw %}{{ name }}{% raw %}', qtype='{% endraw %}{{ rrset_type }}{% raw %}', flat=0, fail_on_error=false, real_empty=false) }}{% endraw %}"
 {% endfor %}
