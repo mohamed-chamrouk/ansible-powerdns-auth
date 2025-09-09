@@ -118,7 +118,7 @@
           - result['exception'] is not defined
           - not result.failed
           - result.changed
-          - (dig | sort(attribute='address') | map(attribute='address') | list) == ["192.168.1.1", "10.0.0.1"]
+          - (dig | sort(attribute='address') | map(attribute='address') | list) == ['192.168.1.1', '10.0.0.1']
           - (dig | map(attribute='ttl') | unique | list) == [3600]
       vars:
         dig: "{{ query('dig_local', 't.a.rrset.example.', qtype='A', flat=0, fail_on_error=false, real_empty=false) }}"
