@@ -545,10 +545,6 @@ def main():
             "keep"
         )  # Keeping the option out for cleaner zone_struct on subsequent unpacking
 
-        print(f"=============={rrset["records"]}==============")
-        if existing_rrset :
-            print(f"=============={existing_rrset["records"]}==============")
-
         if not existing_rrset or not rrset_keep:
             if rrset_changetype == "REPLACE":
                 if rrset["type"] is not None:
@@ -599,11 +595,6 @@ def main():
                         "changetype": "REPLACE",
                     }
                 )
-
-    if len(zone_struct["rrsets"]) == 1:
-        result["rrset"] = zone_struct["rrsets"][0]
-    elif len(zone_struct["rrsets"]) >= 1:
-        result["rrsets"] = zone_struct["rrsets"]
 
     if module.check_mode:
         module.exit_json(**result)
