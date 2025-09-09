@@ -76,7 +76,7 @@
           - result.changed
           - dig == "NXDOMAIN"
       vars:
-        dig: "{{ query('dig_local', 't.hinfo.rrset.example.', qtype='HINFO', flat=1, fail_on_error=false, real_empty=false) }}"
+        dig: "{{ query('dig_local', 't.hinfo.rrset.example.', qtype='HINFO', flat=0, fail_on_error=false, real_empty=false) }}"
 
     - name: check updating existing rrset by replacing all records
       kpfleming.powerdns_auth.rrset:
@@ -97,7 +97,7 @@
           - dig['address'].lower() == "2001:db8::0"
           - dig['ttl'] == 7200
       vars:
-        dig: "{{ query('dig_local', 't.aaaa.rrset.example.', qtype='AAAA', flat=1, fail_on_error=false, real_empty=false) }}"
+        dig: "{{ query('dig_local', 't.aaaa.rrset.example.', qtype='AAAA', flat=0, fail_on_error=false, real_empty=false) }}"
 
     - name: check updating existing rrset and keeping records
       kpfleming.powerdns_auth.rrset:
@@ -138,7 +138,7 @@
           - dig['ttl'] == 3600
           - dig['owner'] == "t.txt.rrset.example."
       vars:
-        dig: "{{ query('dig_local', 't.txt.rrset.example.', qtype='TXT', flat=1, fail_on_error=false, real_empty=false) }}"
+        dig: "{{ query('dig_local', 't.txt.rrset.example.', qtype='TXT', flat=0, fail_on_error=false, real_empty=false) }}"
 
     - name: check updating existing rrset with same content
       kpfleming.powerdns_auth.rrset:
@@ -159,7 +159,7 @@
           - dig['ttl'] == 3600
           - dig['owner'] == "t.NS.rrset.example."
       vars:
-        dig: "{{ query('dig_local', 't.NS.rrset.example.', qtype='NS', flat=1, fail_on_error=false, real_empty=false) }}"
+        dig: "{{ query('dig_local', 't.NS.rrset.example.', qtype='NS', flat=0, fail_on_error=false, real_empty=false) }}"
 
     - name: check deleting non-existant rrset
       kpfleming.powerdns_auth.rrset:
