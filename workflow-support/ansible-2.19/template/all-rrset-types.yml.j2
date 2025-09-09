@@ -24,7 +24,7 @@
       - not result.failed
       - result.changed
       - rrset != "NXDOMAIN"
-{% if rrset.length() == 1 %}
+{% if rrset %}
       - rrset["type"] == "{{ rrset_type }}"
       - rrset["owner"] == "{{ name }}"
 {% else %}
