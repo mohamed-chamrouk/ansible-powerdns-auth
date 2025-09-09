@@ -24,8 +24,12 @@
       - not result.failed
       - result.changed
       - rrset != "NXDOMAIN"
+{% if rrset.length == 1 %}
       - rrset["type"] == "{{ rrset_type }}"
       - rrset["owner"] == "{{ name }}"
+{% else %}
+      - rrset["type"] == {% raw %}"{{ rrset | map(attribute='type') | unique | list }} == [3600]"{% endraw %}
+      - rrset["owner"] == {% raw %}"{{ rrset | map(attribute='owner') | unique | list }} == ['{% endraw %}{{ name }}{% raw %}']"{% endraw %}
   vars:
     rrset: "{% raw %}{{ lookup('dig_local', '{% endraw %}{{ name }}{% raw %}', qtype='{% endraw %}{{ rrset_type }}{% raw %}', flat=0, fail_on_error=false, real_empty=false) }}{% endraw %}"
 {% endfor %}

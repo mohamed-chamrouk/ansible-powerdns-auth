@@ -2,8 +2,6 @@ rrsets:
   - A:
       - address: 192.168.1.1
         disabled: false
-      - address: 192.168.1.3
-        disabled: true
   - AAAA:
       - address: 2001:db8:85a3::8a2e:370:7334
         disabled: false
@@ -40,7 +38,7 @@ rrsets:
         disabled: false
       - preference: 20
         exchange: mail2.example.com.
-        disabled: true
+        disabled: false
   - NAPTR:
       - order: 100
         preference: 50
