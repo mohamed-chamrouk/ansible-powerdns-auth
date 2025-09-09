@@ -61,13 +61,10 @@
       ansible.builtin.include_tasks:
         file: test-rrset-all-dnssec-types.yml
 
-    - name: Listing all rrsets
-      kpfleming.powerdns_auth.rrset:
-        <<: *common
-        state: exists
-      register: result
     - debug:
-        var: result
+        var: dig
+      vars:
+        dig: "{{ query('dig_local', 't.hinfo.rrset.example.', qtype='HINFO', flat=1, fail_on_error=false, real_empty=false) }}"
 
     - name: check deleting existing rrset
       kpfleming.powerdns_auth.rrset:
@@ -84,7 +81,7 @@
           - result.changed
           - dig == ""
       vars:
-        dig: "{{ query('dig_local', 't.HINFO.rrset.example.', qtype='HINFO', flat=1, fail_on_error=false, real_empty=false) }}"
+        dig: "{{ query('dig_local', 't.hinfo.rrset.example.', qtype='HINFO', flat=1, fail_on_error=false, real_empty=false) }}"
 
     - name: check updating existing rrset by replacing all records
       kpfleming.powerdns_auth.rrset:
@@ -105,7 +102,7 @@
           - dig['address'].lower() == "2001:db8::0"
           - dig['ttl'] == 7200
       vars:
-        dig: "{{ query('dig_local', 't.AAAA.rrset.example.', qtype='AAAA', flat=1, fail_on_error=false, real_empty=false) }}"
+        dig: "{{ query('dig_local', 't.aaaa.rrset.example.', qtype='AAAA', flat=1, fail_on_error=false, real_empty=false) }}"
 
     - name: check updating existing rrset and keeping records
       kpfleming.powerdns_auth.rrset:
@@ -125,7 +122,7 @@
           - (dig | sort(attribute='address') | map(attribute='address') | list) == ["192.168.1.1", "10.0.0.1"]
           - (dig | map(attribute='ttl') | list) == [3600, 3600]
       vars:
-        dig: "{{ query('dig_local', 't.A.rrset.example.', qtype='A', flat=0, fail_on_error=false, real_empty=false) }}"
+        dig: "{{ query('dig_local', 't.a.rrset.example.', qtype='A', flat=0, fail_on_error=false, real_empty=false) }}"
 
     - name: check deleting some of records in exisitng rrset
       kpfleming.powerdns_auth.rrset:
@@ -144,9 +141,9 @@
           - result.changed
           - dig['strings'][0]['__ansible_unsafe'] == "project=powerdns env=dev"
           - dig['ttl'] == 3600
-          - dig['owner'] == "t.TXT.rrset.example."
+          - dig['owner'] == "t.txt.rrset.example."
       vars:
-        dig: "{{ query('dig_local', 't.TXT.rrset.example.', qtype='TXT', flat=1, fail_on_error=false, real_empty=false) }}"
+        dig: "{{ query('dig_local', 't.txt.rrset.example.', qtype='TXT', flat=1, fail_on_error=false, real_empty=false) }}"
 
     - name: check updating existing rrset with same content
       kpfleming.powerdns_auth.rrset:
