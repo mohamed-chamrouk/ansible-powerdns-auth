@@ -228,6 +228,6 @@
           - result.failed
           - not result.changed
 
-    - name: check listing all rrsets of a zone
-    - name: check listing all rrsets of a given type
-    - name: check listing all rrsets of a given name
+    #- name: check listing all rrsets of a zone
+    #- name: check listing all rrsets of a given type
+    #- name: check listing all rrsets of a given name
