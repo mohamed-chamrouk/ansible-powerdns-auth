@@ -134,7 +134,7 @@
           - result['exception'] is not defined
           - not result.failed
           - result.changed
-          - ( dig | map(attribute='strings' | list | first)['__ansible_unsafe'] == "project=powerdns env=dev"
+          - ( dig | map(attribute='strings') | list | first)['__ansible_unsafe'] == "project=powerdns env=dev"
           - ( dig | map(attribute='ttl') | list) == [3600]
           - (dig | map(attribute='owner') | list) == ["t.txt.rrset.example."]
       vars:
