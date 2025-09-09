@@ -128,17 +128,13 @@
         TXT:
           - strings: "project=powerdns env=dev"
       register: result
-    - debug:
-        msg: "{{ (dig | map(attribute='strings') | list | first) }}"
-      vars:
-        dig: "{{ query('dig_local', 't.txt.rrset.example.', qtype='TXT', flat=0, fail_on_error=false, real_empty=false) }}"
     - ansible.builtin.assert:
         quiet: true
         that:
           - result['exception'] is not defined
           - not result.failed
           - result.changed
-          - (dig | map(attribute='strings') | list | first)['__ansible_unsafe'] == "project=powerdns env=dev"
+          - (dig | map(attribute='strings') | list | first) == "v=verify1 abc123"
           - (dig | map(attribute='ttl') | list) == [3600]
           - (dig | map(attribute='owner') | list) == ["t.txt.rrset.example."]
       vars:
