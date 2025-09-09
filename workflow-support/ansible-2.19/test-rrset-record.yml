@@ -184,7 +184,7 @@
           - result['exception'] is not defined
           - not result.failed
           - not result.changed
-          - (dig | map(attribute='target') | list) == ["app.example.com"]
+          - (dig | map(attribute='target') | list) == ["app.example.com."]
           - (dig | map(attribute='ttl') | list) == [3600]
           - (dig | map(attribute='owner') | list) == ["t.cname.rrset.example."]
       vars:
