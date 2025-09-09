@@ -129,7 +129,7 @@
           - strings: "project=powerdns env=dev"
       register: result
     - debug:
-        msg: "{{ (dig | map(attribute='strings') | list | first)[0] == 'v=verify1 abc123' }}"
+        msg: "{{ (dig | map(attribute='strings') | list | first)[0] }}"
       vars:
         dig: "{{ query('dig_local', 't.txt.rrset.example.', qtype='TXT', flat=0, fail_on_error=false, real_empty=false) }}"
     - ansible.builtin.assert:
