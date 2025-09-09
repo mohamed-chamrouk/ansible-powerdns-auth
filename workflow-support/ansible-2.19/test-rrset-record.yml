@@ -61,6 +61,14 @@
       ansible.builtin.include_tasks:
         file: test-rrset-all-dnssec-types.yml
 
+    - name: Listing all rrsets
+      kpfleming.powerdns_auth.rrset:
+        <<: *common
+        state: exists
+      register: result
+    - debug:
+        var: result
+
     - name: check deleting existing rrset
       kpfleming.powerdns_auth.rrset:
         <<: *common
