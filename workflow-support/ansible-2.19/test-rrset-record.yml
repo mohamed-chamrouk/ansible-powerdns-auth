@@ -163,7 +163,7 @@
           - (dig | map(attribute='ttl') | list) == [3600]
           - (dig | map('owner') | list) == ["rrset.example."]
       vars:
-        dig: "{{ query('dig_local', 't.NS.rrset.example.', qtype='NS', flat=0, fail_on_error=false, real_empty=false) }}"
+        dig: "{{ query('dig_local', 'rrset.example.', qtype='NS', flat=0, fail_on_error=false, real_empty=false) }}"
 
     - name: check deleting non-existant rrset
       kpfleming.powerdns_auth.rrset:
@@ -227,3 +227,7 @@
           - result['exception'] is defined
           - result.failed
           - not result.changed
+
+    - name: check listing all rrsets of a zone
+    - name: check listing all rrsets of a given type
+    - name: check listing all rrsets of a given name
