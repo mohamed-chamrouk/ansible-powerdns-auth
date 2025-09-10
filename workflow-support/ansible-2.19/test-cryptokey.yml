@@ -137,7 +137,7 @@
           - (result.cryptokeys | length) == 1
           - result.cryptokeys[0]["active"] == true
           - result.cryptokeys[0]["keytype"] == "csk"
-          - "lMu/7quhLeSueMcdlt3T0sxln32yhrhASCKKDB1xJOk=" in result.cryptokeys[0]["dnskey"]
+          - '"lMu/7quhLeSueMcdlt3T0sxln32yhrhASCKKDB1xJOk=" in result.cryptokeys[0]["dnskey"]'
           - output["key"] == "lMu/7quhLeSueMcdlt3T0sxln32yhrhASCKKDB1xJOk="
           - output["algorithm"] == 15
       vars:
