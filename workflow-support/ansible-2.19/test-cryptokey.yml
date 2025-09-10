@@ -163,6 +163,7 @@
               active: false
               keytype: ksk
               algorithm: ed25519
+          register: cryptokey
         - name: getting keys
           kpfleming.powerdns_auth.cryptokey:
             <<: *common
@@ -195,22 +196,22 @@
             cryptokey:
               active: true
           ignore_errors: true
-          register: result_active
+          register: cryptokey
         - kpfleming.powerdns_auth.cryptokey:
             <<: *common
             state: "exists"
             cryptokey_id: 2
           ignore_errors: true
-          register: result_get
+          register: result
     - <<: *refresh
     - ansible.builtin.assert:
         quiet: true
         that:
-          - result_active['exception'] is not defined
-          - result_get['exception'] is not defined
-          - not result_active.failed
-          - not result_get.failed
-          - result_get.cryptokey.active == true
+          - cryptokey['exception'] is not defined
+          - result['exception'] is not defined
+          - not cryptokey.failed
+          - not result.failed
+          - result.cryptokey.active == true
           - output["algorithm"] == 15
       vars:
         output: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=false, real_empty=false) }}"
