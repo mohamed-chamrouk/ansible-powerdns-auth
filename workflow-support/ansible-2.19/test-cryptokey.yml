@@ -75,7 +75,7 @@
     - debug:
         var: output
       vars:
-        output: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=true, real_empty=true) }}"
+        output: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=true, real_empty=true) | tojson }}"
     - ansible.builtin.assert:
         quiet: true
         that:
@@ -89,7 +89,7 @@
           - output["algorithm"] == 15
           - output["type"] == "DNSKEY"
       vars:
-        output: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=true, real_empty=true) }}"
+        output: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=true, real_empty=true) | tojson }}"
 
     - name: check key deletion
       kpfleming.powerdns_auth.cryptokey:
