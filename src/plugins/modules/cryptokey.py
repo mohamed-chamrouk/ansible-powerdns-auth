@@ -116,7 +116,7 @@ def main():
         "cryptokey": {
             "type": "dict",
             "options": {
-                "keytype": {"type": "str", "required": False, "choices": ["zsk", "ksk", "csk"]},
+                "keytype": {"type": "str", "required": True, "choices": ["zsk", "ksk", "csk"]},
                 "active": {"type": "bool", "default": False},
                 "published": {"type": "bool", "default": True},
                 "dnskey": {"type": "str", "required": False},
