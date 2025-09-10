@@ -72,9 +72,9 @@
           - result['exception'] is not defined
           - not result.failed
           - result.changed
-          - dig == ["NXDOMAIN"]
+          - dig == "NXDOMAIN"
       vars:
-        dig: "{{ query('dig_local', 't.hinfo.rrset.example.', qtype='HINFO', flat=0, fail_on_error=false, real_empty=false) }}"
+        dig: "{{ lookup('dig_local', 't.hinfo.rrset.example.', qtype='HINFO', flat=0, fail_on_error=false, real_empty=false) }}"
 
     - name: check updating existing rrset by replacing all records
       kpfleming.powerdns_auth.rrset:
@@ -92,10 +92,10 @@
           - result['exception'] is not defined
           - not result.failed
           - result.changed
-          - (dig | map(attribute='address') | list) == ["2001:db8::3"]
-          - (dig | map(attribute='ttl') | list) == [7200]
+          - dig['address'] == "2001:db8::3"
+          - dig['ttl'] == 7200
       vars:
-        dig: "{{ query('dig_local', 't.aaaa.rrset.example.', qtype='AAAA', flat=0, fail_on_error=false, real_empty=false) }}"
+        dig: "{{ lookup('dig_local', 't.aaaa.rrset.example.', qtype='AAAA', flat=0, fail_on_error=false, real_empty=false) }}"
 
     - name: check updating existing rrset and keeping records
       kpfleming.powerdns_auth.rrset:
@@ -126,21 +126,17 @@
         TXT:
           - strings: "project=powerdns env=dev"
       register: result
-    - debug:
-        msg: "{{ ((dig | map(attribute='strings') | list | first)[0] | string) }}"
-      vars:
-        dig: "{{ query('dig_local', 't.txt.rrset.example.', qtype='TXT', flat=0, fail_on_error=false, real_empty=false) }}"
     - ansible.builtin.assert:
         quiet: true
         that:
           - result['exception'] is not defined
           - not result.failed
           - result.changed
-          - ((dig | map(attribute='strings') | list | first)[0] | string) == "b'v=verify1 abc123'"
-          - (dig | map(attribute='ttl') | list) == [3600]
-          - (dig | map(attribute='owner') | list) == ["t.txt.rrset.example."]
+          - (dig['strings'][0] | string) == "b'v=verify1 abc123'"
+          - dig['ttl'] == 3600
+          - dig['owner'] == "t.txt.rrset.example."
       vars:
-        dig: "{{ query('dig_local', 't.txt.rrset.example.', qtype='TXT', flat=0, fail_on_error=false, real_empty=false) }}"
+        dig: "{{ lookup('dig_local', 't.txt.rrset.example.', qtype='TXT', flat=0, fail_on_error=false, real_empty=false) }}"
 
     - name: check updating existing rrset with same content
       kpfleming.powerdns_auth.rrset:
@@ -157,11 +153,11 @@
           - result['exception'] is not defined
           - not result.failed
           - not result.changed
-          - (dig | map(attribute='target') | list) == ["ns1.example.com."]
-          - (dig | map(attribute='ttl') | list) == [3600]
-          - (dig | map(attribute='owner') | list) == ["rrset.example."]
+          - dig['target'] == "ns1.example.com."
+          - dig['ttl'] == 3600
+          - dig['owner'] == "rrset.example."
       vars:
-        dig: "{{ query('dig_local', 'rrset.example.', qtype='NS', flat=0, fail_on_error=false, real_empty=false) }}"
+        dig: "{{ lookup('dig_local', 'rrset.example.', qtype='NS', flat=0, fail_on_error=false, real_empty=false) }}"
 
     - name: check deleting nonexistent record from existing rrset
       kpfleming.powerdns_auth.rrset:
@@ -172,21 +168,17 @@
         CNAME:
           - cname: app1.example.com
       register: result
-    - debug:
-        var: dig
-      vars:
-        dig: "{{ query('dig_local', 't.cname.rrset.example.', qtype='CNAME', flat=0, fail_on_error=false, real_empty=false) }}"
     - ansible.builtin.assert:
         quiet: true
         that:
           - result['exception'] is not defined
           - not result.failed
           - not result.changed
-          - (dig | map(attribute='target') | list) == ["app.example.com."]
-          - (dig | map(attribute='ttl') | list) == [3600]
-          - (dig | map(attribute='owner') | list) == ["t.cname.rrset.example."]
+          - dig['target'] == "app.example.com."
+          - dig['ttl'] == 3600
+          - dig['owner'] == "t.cname.rrset.example."
       vars:
-        dig: "{{ query('dig_local', 't.cname.rrset.example.', qtype='CNAME', flat=0, fail_on_error=false, real_empty=false) }}"
+        dig: "{{ lookup('dig_local', 't.cname.rrset.example.', qtype='CNAME', flat=0, fail_on_error=false, real_empty=false) }}"
 
     - name: check deleting nonexistent rrset
       kpfleming.powerdns_auth.rrset:
