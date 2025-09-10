@@ -151,7 +151,7 @@
           - result.exists
           - result.cryptokey["active"] == true
           - result.cryptokey["keytype"] == "csk"
-          - '"lMu/7quhLeSueMcdlt3T0sxln32yhrhASCKKDB1xJOk=" in result.cryptokeys["dnskey"]'
+          - '"lMu/7quhLeSueMcdlt3T0sxln32yhrhASCKKDB1xJOk=" in result.cryptokey["dnskey"]'
 
     - name: check listing of all keys
       block:
