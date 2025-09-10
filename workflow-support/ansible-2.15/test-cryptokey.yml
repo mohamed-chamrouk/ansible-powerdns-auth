@@ -37,7 +37,7 @@
     - ansible.builtin.assert:
         quiet: true
         that:
-          - '"exception" not in result'
+          - result['exception'] is not defined
           - not result.failed
           - result.changed
           - result.zone.name == "cryptokeys.example."
@@ -52,7 +52,7 @@
     - ansible.builtin.assert:
         quiet: true
         that:
-          - '"exception" not in result'
+          - result['exception'] is not defined
           - not result.failed
           - not result.exists
           - not result.changed
@@ -75,7 +75,7 @@
     - ansible.builtin.assert:
         quiet: true
         that:
-          - '"exception" not in result'
+          - result['exception'] is not defined
           - not result.failed
           - result.changed
           - (result.cryptokeys | length) == 1
@@ -97,7 +97,7 @@
     - ansible.builtin.assert:
         quiet: true
         that:
-          - '"exception" not in result'
+          - result['exception'] is not defined
           - not result.failed
           - result.changed
           - result.cryptokeys == []
@@ -124,7 +124,7 @@
     - ansible.builtin.assert:
         quiet: true
         that:
-          - '"exception" not in result'
+          - result['exception'] is not defined
           - not result.failed
           - result.changed
           - (result.cryptokeys | length) == 1
@@ -145,7 +145,7 @@
     - ansible.builtin.assert:
         quiet: true
         that:
-          - '"exception" not in result'
+          - result['exception'] is not defined
           - not result.failed
           - not result.changed
           - result.exists
@@ -172,7 +172,7 @@
     - ansible.builtin.assert:
         quiet: true
         that:
-          - '"exception" not in result'
+          - result['exception'] is not defined
           - not result.failed
           - not result.changed
           - result.exists
@@ -207,8 +207,8 @@
     - ansible.builtin.assert:
         quiet: true
         that:
-          - '"exception" not in cryptokey'
-          - '"exception" not in result'
+          - cryptokey['exception'] is not defined
+          - result['exception'] is not defined
           - not cryptokey.failed
           - not result.failed
           - result.cryptokey.active == true
@@ -226,7 +226,7 @@
     - ansible.builtin.assert:
         quiet: true
         that:
-          - '"exception" in result'
+          - result['exception'] is defined
           - result.failed
           - not result.exists
           - result.msg == "API operation getCryptokey returned 'Not Found'"
@@ -241,7 +241,7 @@
     - ansible.builtin.assert:
         quiet: true
         that:
-          - '"exception" in result'
+          - result['exception'] is defined
           - result.failed
           - result.msg == "No zone found for name nonexistent.example."
 
@@ -258,7 +258,7 @@
     - ansible.builtin.assert:
         quiet: true
         that:
-          - '"exception" in result'
+          - result['exception'] is defined
           - result.failed
           - result.msg == "Wrong options provided for cryptokey creation"
 
@@ -274,7 +274,7 @@
     - ansible.builtin.assert:
         quiet: true
         that:
-          - '"exception" in result'
+          - result['exception'] is defined
           - result.failed
           - result.msg == "Missing keytype option in cryptokey definition"
 
@@ -288,6 +288,6 @@
     - ansible.builtin.assert:
         quiet: true
         that:
-          - '"exception" in result'
+          - result['exception'] is defined
           - result.failed
           - result.msg == "Key of id 100 not found for zone cryptokeys.example."
