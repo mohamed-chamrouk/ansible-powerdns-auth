@@ -30,15 +30,15 @@
       - result.changed
       - rrset != "NXDOMAIN"
       - >
-        ( rrset is not string and ( rrset | map(attribute='type') | unique | list == ["{{ rrset_type }}"])
+        ( rrset is not string and ( rrset | map(attribute='type') | unique | list ) == ["{{ rrset_type }}"])
         or
         ( rrset is string )
       - >
-        ( rrset is not string and ( rrset | map(attribute='ttl') | unique | list == [3600])
+        ( rrset is not string and ( rrset | map(attribute='ttl') | unique | list ) == [3600])
         or
         ( rrset is string )
       - >
-        ( rrset is not string and ( rrset | map(attribute='owner') | unique | list == ["{{ name }}"])
+        ( rrset is not string and ( rrset | map(attribute='owner') | unique | list ) == ["{{ name }}"])
         or
         ( rrset is string )
   vars:
