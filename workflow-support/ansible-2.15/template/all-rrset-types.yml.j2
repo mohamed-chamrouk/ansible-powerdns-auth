@@ -29,9 +29,9 @@
       - not result.failed
       - result.changed
       - rrset != "NXDOMAIN"
-      - ( rrset | map(attribute='type') | unique | list ) == ["{{ rrset_type }}"]
-      - ( rrset | map(attribute='ttl') | unique | list ) == [3600]
-      - ( rrset | map(attribute='owner') | unique | list ) == ["{{ name }}"]
+      - ( rrset | tojson | map(attribute='type') | unique | list ) == ["{{ rrset_type }}"]
+      - ( rrset | tojson | map(attribute='ttl') | unique | list ) == [3600]
+      - ( rrset | tojson | map(attribute='owner') | unique | list ) == ["{{ name }}"]
   vars:
     rrset: "{% raw %}{{ query('dig_local', '{% endraw %}{{ name }}{% raw %}', qtype='{% endraw %}{{ rrset_type }}{% raw %}', flat=0, fail_on_error=false, real_empty=false) }}{% endraw %}"
 {% endfor %}
