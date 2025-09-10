@@ -126,6 +126,10 @@
         TXT:
           - strings: "project=powerdns env=dev"
       register: result
+    - ansible.builtin.assert:
+        that:
+          - 1 == 2
+        fail_msg: "bob"
     - debug:
         msg: "{{ dig }}"
       vars:
