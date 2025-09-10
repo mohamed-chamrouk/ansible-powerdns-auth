@@ -126,10 +126,6 @@
         TXT:
           - strings: "project=powerdns env=dev"
       register: result
-    - debug:
-        var: dig
-      vars:
-        dig: "{{ lookup('dig_local', 't.txt.rrset.example.', qtype='TXT', flat=0, fail_on_error=false, real_empty=false) }}"
     - ansible.builtin.assert:
         quiet: true
         that:
