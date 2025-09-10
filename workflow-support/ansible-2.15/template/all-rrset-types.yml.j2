@@ -17,6 +17,11 @@
     {{ params | combine(rrset) }}
   register: result
 
+- debug:
+    var: rrset
+  vars:
+    rrset: "{% raw %}{{ lookup('dig_local', '{% endraw %}{{ name }}{% raw %}', qtype='{% endraw %}{{ rrset_type }}{% raw %}', flat=0, fail_on_error=false, real_empty=false) }}{% endraw %}"
+
 - ansible.builtin.assert:
     quiet: true
     that:
