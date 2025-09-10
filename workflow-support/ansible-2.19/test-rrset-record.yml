@@ -34,7 +34,6 @@
         state: present
         properties:
           kind: Native
-          account: test-account1
           nameservers:
             - ns.example.
           soa:
@@ -50,7 +49,6 @@
           - result.changed
           - result.zone.name == "rrset.example."
           - result.zone.kind == "Native"
-          - result.zone.account == "test-account1"
 
   tasks:
     - name: check creating each type of supported DNS record
@@ -165,7 +163,7 @@
       vars:
         dig: "{{ query('dig_local', 'rrset.example.', qtype='NS', flat=0, fail_on_error=false, real_empty=false) }}"
 
-    - name: check deleting non-existant record from existing rrset
+    - name: check deleting nonexistent record from existing rrset
       kpfleming.powerdns_auth.rrset:
         <<: *common
         state: absent
@@ -190,7 +188,7 @@
       vars:
         dig: "{{ query('dig_local', 't.cname.rrset.example.', qtype='CNAME', flat=0, fail_on_error=false, real_empty=false) }}"
 
-    - name: check deleting non-existant rrset
+    - name: check deleting nonexistent rrset
       kpfleming.powerdns_auth.rrset:
         <<: *common
         state: absent
@@ -205,7 +203,7 @@
           - result.failed
           - not result.changed
 
-    - name: check operation on non-existant zone
+    - name: check operation on nonexistent zone
       kpfleming.powerdns_auth.rrset:
         api_key: foo
         zone_name: NS.example.

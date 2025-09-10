@@ -64,7 +64,7 @@ class APICryptokeyWrapper(APIWrapper):
         ).result()
 
     @api_exception_handler
-    def getCryptokey(self, **kwargs):
+    def getCryptokey(self):
         return self.raw_api.getCryptokey(
             server_id=self.server_id, zone_id=self.zone_id, cryptokey_id=self.cryptokey_id
         ).result()
@@ -153,21 +153,24 @@ def main():
 
     if len(partial_zone_info) == 0:
         module.fail_json(msg=f"No zone found for name {zone_name}", **result)
-    else:
-        # get the full zone_id from the Zone API
-        zone_id = partial_zone_info[0]["id"]
-        api_cryptokey_client.zone_id = zone_id
+
+    zone_id = partial_zone_info[0]["id"]
+    api_cryptokey_client.zone_id = zone_id
 
     existing_zone_keys = api_cryptokey_client.listCryptokeys()
     cryptokey = {}
     cryptokeys = []
 
     if state == "exists":
+        result["exists"] = False
         if params["cryptokey_id"] is not None:
             api_cryptokey_client.cryptokey_id = params["cryptokey_id"]
             cryptokey = api_cryptokey_client.getCryptokey()
         else:
             cryptokeys = existing_zone_keys
+
+        if cryptokey or cryptokeys:
+            result["exists"] = True
     elif state == "present":
         cryptokey_def = params["cryptokey"]
         if params["cryptokey_id"] is None:
@@ -224,8 +227,9 @@ def main():
 
         result["changed"] = True
 
-    result["cryptokey"] = cryptokey
-    result["cryptokeys"] = cryptokeys
+    if result["changed"]:
+        result["cryptokeys"] = api_cryptokey_client.listCryptokeys()
+
     module.exit_json(**result)
 
 
