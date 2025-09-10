@@ -127,7 +127,7 @@
           - strings: "project=powerdns env=dev"
       register: result
     - debug:
-        msg: "{{ dig | string }}"
+        msg: "{{(dig | tojson)['strings'][0]}}"
       vars:
         dig: "{{ lookup('dig_local', 't.txt.rrset.example.', qtype='TXT', flat=0, fail_on_error=false, real_empty=false) }}"
 
@@ -137,7 +137,7 @@
           - result['exception'] is not defined
           - not result.failed
           - result.changed
-          - (dig['strings'][0] | string) == "b'v=verify1 abc123'"
+          - (dig | tojson)['strings'][0] == "b'v=verify1 abc123'"
           - dig['ttl'] == 3600
           - dig['owner'] == "t.txt.rrset.example."
       vars:
