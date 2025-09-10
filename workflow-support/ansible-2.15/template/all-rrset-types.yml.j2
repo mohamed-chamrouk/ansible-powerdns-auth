@@ -33,5 +33,5 @@
       - ( rrset | map(attribute='ttl') | unique | list ) == [3600]
       - ( rrset | map(attribute='owner') | unique | list ) == ["{{ name }}"]
   vars:
-    rrset: "{% raw %}{{ query('dig_local', '{% endraw %}{{ name }}{% raw %}', qtype='{% endraw %}{{ rrset_type }}{% raw %}', flat=0, fail_on_error=false, real_empty=false) | tojson }}{% endraw %}"
+    rrset: "{% raw %}{{ query('dig_local', '{% endraw %}{{ name }}{% raw %}', qtype='{% endraw %}{{ rrset_type }}{% raw %}', flat=0, fail_on_error=false, real_empty=false) }}{% endraw %}"
 {% endfor %}
