@@ -85,7 +85,7 @@
           - output["algorithm"] == 15
           - output["type"] == "DNSKEY"
       vars:
-        output: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=true, real_empty=true) | tojson }}"
+        output: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=true, real_empty=true)}}"
 
     - name: check key deletion
       kpfleming.powerdns_auth.cryptokey:
@@ -134,7 +134,7 @@
           - output["key"] == "lMu/7quhLeSueMcdlt3T0sxln32yhrhASCKKDB1xJOk="
           - output["algorithm"] == 15
       vars:
-        output: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=false, real_empty=false) | tojson }}"
+        output: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=false, real_empty=false)}}"
 
     - name: check getting key by id
       kpfleming.powerdns_auth.cryptokey:
@@ -214,7 +214,7 @@
           - result.cryptokey.active == true
           - output["algorithm"] == 15
       vars:
-        output: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=false, real_empty=false) | tojson }}"
+        output: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=false, real_empty=false)}}"
 
     - name: check getting key by id of nonexistent key
       kpfleming.powerdns_auth.cryptokey:
