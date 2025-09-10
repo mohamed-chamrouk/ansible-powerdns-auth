@@ -127,9 +127,9 @@
           - strings: "project=powerdns env=dev"
       register: result
     - debug:
-        msg: "{{(dig | tojson)['strings'][0]}}"
+        msg: "{{ dig }}"
       vars:
-        dig: "{{ lookup('dig_local', 't.txt.rrset.example.', qtype='TXT', flat=0, fail_on_error=false, real_empty=false) }}"
+        dig: "{{ lookup('dig_local', 't.txt.rrset.example.', qtype='TXT', flat=0, fail_on_error=false, real_empty=false) | tojson }}"
 
     - ansible.builtin.assert:
         quiet: true
