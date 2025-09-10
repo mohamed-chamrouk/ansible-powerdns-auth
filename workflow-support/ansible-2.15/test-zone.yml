@@ -14,6 +14,7 @@
         that:
           - 1 == 2
         fail_msg: "bob"
+    - ansible.builtin.shell:
     - ansible.builtin.debug:
         var: ansible_python_interpreter
 
