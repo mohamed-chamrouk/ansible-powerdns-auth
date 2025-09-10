@@ -124,27 +124,26 @@
       kpfleming.powerdns_auth.rrset:
         <<: *common
         state: absent
-        name: t.TXT.rrset.example.
+        name: t.srv.rrset.example.
         keep: true
-        TXT:
-          - strings: "project=powerdns env=dev"
+        SRV:
+          - priority: 5
+            weight: 1
+            port: 443
+            target: web.example.com.
       register: result
-    - debug:
-        msg: "{{ dig }}"
-      vars:
-        dig: "{{ lookup('dig_local', 't.srv.rrset.example.', qtype='SRV', flat=0, fail_on_error=false, real_empty=false) | tojson }}"
-
     - ansible.builtin.assert:
         quiet: true
         that:
           - result['exception'] is not defined
           - not result.failed
           - result.changed
-          - (dig | tojson)['strings'][0] == "b'v=verify1 abc123'"
+          - dig['target'] == "xmpp.example.com."
+          - dig['port'] == 5222
           - dig['ttl'] == 3600
-          - dig['owner'] == "t.txt.rrset.example."
+          - dig['owner'] == "t.srv.rrset.example."
       vars:
-        dig: "{{ lookup('dig_local', 't.txt.rrset.example.', qtype='TXT', flat=0, fail_on_error=false, real_empty=false) }}"
+        dig: "{{ lookup('dig_local', 't.srv.rrset.example.', qtype='SRV', flat=0, fail_on_error=false, real_empty=false) | tojson }}"
 
     - name: check updating existing rrset with same content
       kpfleming.powerdns_auth.rrset:
