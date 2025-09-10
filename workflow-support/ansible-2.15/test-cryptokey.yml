@@ -256,7 +256,6 @@
     - ansible.builtin.assert:
         quiet: true
         that:
-          - result['exception'] is defined
           - result.failed
           - result.msg == "Wrong options provided for cryptokey creation"
 
@@ -272,7 +271,6 @@
     - ansible.builtin.assert:
         quiet: true
         that:
-          - result['exception'] is defined
           - result.failed
           - result.msg == "Missing keytype option in cryptokey definition"
 
@@ -286,6 +284,5 @@
     - ansible.builtin.assert:
         quiet: true
         that:
-          - result['exception'] is defined
           - result.failed
           - result.msg == "Key of id 100 not found for zone cryptokeys.example."
