@@ -17,10 +17,10 @@
     {{ params | combine(rrset) }}
   register: result
 
-- debug:
-    msg: "{% raw %}{{ rrset }}{% endraw %}"
-  vars:
-    rrset: "{% raw %}{{ query('dig_local', '{% endraw %}{{ name }}{% raw %}', qtype='{% endraw %}{{ rrset_type }}{% raw %}', flat=0, fail_on_error=false, real_empty=false) }}{% endraw %}"
+#- debug:
+#    msg: "{% raw %}{{ rrset }}{% endraw %}"
+#  vars:
+#    rrset: "{% raw %}{{ query('dig_local', '{% endraw %}{{ name }}{% raw %}', qtype='{% endraw %}{{ rrset_type }}{% raw %}', flat=0, fail_on_error=false, real_empty=false) }}{% endraw %}"
 
 - ansible.builtin.assert:
     quiet: true
@@ -29,15 +29,9 @@
       - not result.failed
       - result.changed
       - rrset != "NXDOMAIN"
-{% if (rrset.values() | list | first | length) == 1 %}
-      - rrset["type"] == "{{ rrset_type }}"
-      - rrset["owner"] == "{{ name }}"
-      - rrset["ttl"] == 3600
-{% else %}
       - ( rrset | map(attribute='type') | unique | list ) == ["{{ rrset_type }}"]
       - ( rrset | map(attribute='ttl') | unique | list ) == [3600]
       - ( rrset | map(attribute='owner') | unique | list ) == ["{{ name }}"]
-{% endif %}
   vars:
-    rrset: "{% raw %}{{ lookup('dig_local', '{% endraw %}{{ name }}{% raw %}', qtype='{% endraw %}{{ rrset_type }}{% raw %}', flat=0, fail_on_error=false, real_empty=false) | tojson }}{% endraw %}"
+    rrset: "{% raw %}{{ query('dig_local', '{% endraw %}{{ name }}{% raw %}', qtype='{% endraw %}{{ rrset_type }}{% raw %}', flat=0, fail_on_error=false, real_empty=false) | tojson }}{% endraw %}"
 {% endfor %}
