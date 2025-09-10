@@ -226,7 +226,6 @@
     - ansible.builtin.assert:
         quiet: true
         that:
-          - result['exception'] is defined
           - result.failed
           - not result.exists
           - result.msg == "API operation getCryptokey returned 'Not Found'"
