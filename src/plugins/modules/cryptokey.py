@@ -135,6 +135,8 @@ def main():
 
     result = {
         "changed": False,
+        "cryptokey": {},
+        "cryptokeys": []
     }
 
     params = module.params
@@ -158,18 +160,16 @@ def main():
     api_cryptokey_client.zone_id = zone_id
 
     existing_zone_keys = api_cryptokey_client.listCryptokeys()
-    cryptokey = {}
-    cryptokeys = []
 
     if state == "exists":
         result["exists"] = False
         if params["cryptokey_id"] is not None:
             api_cryptokey_client.cryptokey_id = params["cryptokey_id"]
-            cryptokey = api_cryptokey_client.getCryptokey()
+            result["cryptokey"] = api_cryptokey_client.getCryptokey()
         else:
-            cryptokeys = existing_zone_keys
+            result["cryptokeys"] = existing_zone_keys
 
-        if cryptokey or cryptokeys:
+        if result["cryptokey"] or result["cryptokeys"]:
             result["exists"] = True
     elif state == "present":
         cryptokey_def = params["cryptokey"]
@@ -216,7 +216,6 @@ def main():
         cryptokey_id = params["cryptokey_id"]
 
         if cryptokey_id in cryptokeys_ids:
-            cryptokey = existing_zone_keys[cryptokeys_ids.index(cryptokey_id)]
             api_cryptokey_client.cryptokey_id = cryptokey_id
             api_cryptokey_client.deleteCryptokey()
         else:
