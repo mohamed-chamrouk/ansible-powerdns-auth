@@ -187,14 +187,6 @@
         cryptokey_id: 1
     - <<: *refresh
 
-    - name: deleting key for following tests
-      kpfleming.powerdns_auth.cryptokey:
-        <<: *common
-        state: exists
-      register: result
-    - debug:
-        var: result
-
     - name: check activating key
       block:
         - kpfleming.powerdns_auth.cryptokey:
@@ -229,6 +221,7 @@
         <<: *common
         state: exists
         cryptokey_id: 100
+      ignore_errors: true
       register: result
     - ansible.builtin.assert:
         quiet: true
@@ -236,6 +229,7 @@
           - result['exception'] is defined
           - result.failed
           - not result.exists
+          - result.msg == "API operation getCryptokey returned 'Not Found'"
 
     - name: check operation on nonexistent zone
       kpfleming.powerdns_auth.cryptokey:
