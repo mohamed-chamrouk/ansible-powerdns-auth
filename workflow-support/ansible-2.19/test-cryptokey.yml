@@ -187,6 +187,14 @@
         cryptokey_id: 1
     - <<: *refresh
 
+    - name: deleting key for following tests
+      kpfleming.powerdns_auth.cryptokey:
+        <<: *common
+        state: exists
+      register: result
+    - debug:
+        var: result
+
     - name: check activating key
       block:
         - kpfleming.powerdns_auth.cryptokey:
