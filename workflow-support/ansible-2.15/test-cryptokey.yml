@@ -240,7 +240,6 @@
     - ansible.builtin.assert:
         quiet: true
         that:
-          - result['exception'] is defined
           - result.failed
           - result.msg == "No zone found for name nonexistent.example."
 

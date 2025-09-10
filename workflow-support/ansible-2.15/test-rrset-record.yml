@@ -126,6 +126,8 @@
         TXT:
           - strings: "project=powerdns env=dev"
       register: result
+    - debug:
+        var: result
     - ansible.builtin.assert:
         quiet: true
         that:
