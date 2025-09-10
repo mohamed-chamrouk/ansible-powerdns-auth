@@ -15,6 +15,9 @@
           - host: ns1.example.
 
   pre_tasks:
+    - ansible.builtin.debug:
+        var: ansible_python_interpreter
+
     - name: Creating Native zone for cryptokeys tests
       kpfleming.powerdns_auth.zone:
         name: cryptokeys.example.
@@ -195,13 +198,11 @@
             cryptokey_id: 2
             cryptokey:
               active: true
-          ignore_errors: true
           register: cryptokey
         - kpfleming.powerdns_auth.cryptokey:
             <<: *common
             state: "exists"
             cryptokey_id: 2
-          ignore_errors: true
           register: result
     - <<: *refresh
     - ansible.builtin.assert:

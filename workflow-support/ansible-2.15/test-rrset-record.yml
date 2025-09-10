@@ -14,6 +14,9 @@
       zone_name: rrset.example.
 
   pre_tasks:
+    - ansible.builtin.debug:
+        var: ansible_python_interpreter
+
     - name: Creating template for all rrset types
       ansible.builtin.template:
         src: ./template/all-rrset-types.yml.j2
