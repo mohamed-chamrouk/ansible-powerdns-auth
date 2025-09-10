@@ -6,5 +6,3 @@ ansible-playbook -i localhost, workflow-support/ansible-"${1}"/test-zone-issue-1
 ansible-playbook -i localhost, workflow-support/ansible-"${1}"/test-zone-rrset.yml
 ansible-playbook -i localhost, workflow-support/ansible-"${1}"/test-rrset-record.yml
 ansible-playbook -i localhost, workflow-support/ansible-"${1}"/test-cryptokey.yml
-ansible-playbook -i localhost, workflow-support/ansible-"${1}"/test-rrset-record.yml
-ansible-playbook -i localhost, workflow-support/ansible-"${1}"/test-cryptokey.yml
