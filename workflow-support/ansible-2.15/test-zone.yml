@@ -10,12 +10,6 @@
       api_key: foo
 
   tasks:
-    - ansible.builtin.assert:
-        that:
-          - 1 == 2
-        fail_msg: "bob"
-    - ansible.builtin.shell:
-erlkjqdsflknsdflkn
     - ansible.builtin.debug:
         var: ansible_python_interpreter
 

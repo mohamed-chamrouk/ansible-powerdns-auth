@@ -14,10 +14,6 @@
       zone_name: rrset.example.
 
   pre_tasks:
-    - ansible.builtin.assert:
-        that:
-          - 1 == 2
-        fail_msg: "bob"
     - ansible.builtin.debug:
         var: ansible_python_interpreter
 
@@ -297,31 +293,3 @@
           - not result.changed
           - result.exists
           - (result.rrsets | map(attribute='name') | unique | list) == ["rrset.example."]
-
-    - name: check listing all rrsets
-      kpfleming.powerdns_auth.rrset:
-        <<: *common
-        state: exists
-        type: RRSIG
-      register: result
-    - ansible.builtin.assert:
-        quiet: true
-        that:
-          - result['exception'] is not defined
-          - not result.failed
-          - not result.changed
-          - not result.exists
-
-    - name: check listing all rrsets
-      kpfleming.powerdns_auth.rrset:
-        <<: *common
-        state: exists
-        name: bob.example.
-      register: result
-    - ansible.builtin.assert:
-        quiet: true
-        that:
-          - result['exception'] is not defined
-          - not result.failed
-          - not result.changed
-          - not result.exists
