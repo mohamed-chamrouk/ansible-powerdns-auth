@@ -81,7 +81,7 @@
           - (result.cryptokeys | length) == 1
           - result.cryptokeys[0]["algorithm"].lower() == "ed25519"
           - result.cryptokeys[0]["active"] == true
-          - result.cryptokey[0]["keytype"] == "csk"
+          - result.cryptokeys[0]["keytype"] == "csk"
           - output["algorithm"] == 15
           - output["type"] == "DNSKEY"
       vars:
