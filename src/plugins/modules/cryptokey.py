@@ -146,7 +146,9 @@ EXAMPLES = """
     cryptokey:
       keytype: zsk
       dnskey: "257 3 15 lMu/7quhLeSueMcdlt3T0sxln32yhrhASCKKDB1xJOk="
-      privatekey: "Private-key-format: v1.2\nAlgorithm: 15 (ED25519)\nPrivateKey: Rnt2dv3mWMmP8bU/8koayZ4R5dWdI86zJmZ0nnjPe6Q=\n" # noqa E501
+      privatekey: 'Private-key-format: v1.2\n
+                   Algorithm: 15 (ED25519)\n
+                   PrivateKey: Rnt2dv3mWMmP8bU/8koayZ4R5dWdI86zJmZ0nnjPe6Q=\n"
       active: true
 
 - name: Delete key
@@ -448,7 +450,7 @@ def main():
 
         result["changed"] = True
     else:
-        # state == "absent"
+        # when state is absent
         cryptokeys_ids = [str(key["id"]) for key in existing_zone_keys]
         cryptokey_id = params["cryptokey_id"]
 

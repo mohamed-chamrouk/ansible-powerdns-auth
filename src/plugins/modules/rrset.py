@@ -1336,7 +1336,7 @@ def main():
 
     changetype = "REPLACE" if state == "present" else "DELETE"
     # following variable refers to the DNS Record types options (A,AAAA,CAA...)
-    rrset_record_types = set([p for p in params if params[p] is not None]) & set(record_types)
+    rrset_record_types = set(p for p in params if params[p] is not None) & set(record_types)
 
     # Check couldn't fit in AnsibleModule args
     type_classic = "type" in params and "records" in params
