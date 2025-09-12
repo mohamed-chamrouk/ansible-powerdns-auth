@@ -9,6 +9,7 @@ on:
   push:
     branches:
       - test-actions
+      - record-types
 
 jobs:
   preflight:

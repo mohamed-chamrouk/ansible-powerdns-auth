@@ -7,6 +7,9 @@
     common_args: &common
       api_key: foo
       zone_name: cryptokeys.example.
+    # For some reason in this test environment changes made to the cryptokeys
+    # are not effective unless some record is updated in the zone hence the following
+    # task and its presence throughout the playbook.
     refresh_task: &refresh
       kpfleming.powerdns_auth.rrset:
         <<: *common

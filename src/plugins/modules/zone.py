@@ -1343,7 +1343,7 @@ def main():
 
     # the powerdns' swagger is misconfigured for this operation
     # expects a dict but a string is returned instead
-    #if state == "rectify":
+    # if state == "rectify":
     #    api_zone_client.rectifyZone()
     #    result["changed"] = True
     #    module.exit_json(**result)

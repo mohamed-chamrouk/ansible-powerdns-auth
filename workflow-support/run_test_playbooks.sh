@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -e # in order to fail on any playbook
 
 ansible-playbook -i localhost, workflow-support/ansible-"${1}"/test-tsigkey.yml
 ansible-playbook -i localhost, workflow-support/ansible-"${1}"/test-zone.yml

@@ -16,19 +16,865 @@ assert sys.version_info >= (3, 9), "This module requires Python 3.9 or newer."
 DOCUMENTATION = """
 %YAML 1.2
 ---
+module: powerdns_auth_rrset
 
-author:
-  - Kevin P. Fleming (@kpfleming)
+short_description: Manages a rrset in a zone of PowerDNS Authoritative server
+
+description:
+  - This module can create, delete or update a rrset inside a zone of
+    PowerDNS Authoritative server.
+
+requirements:
+  - bravado
+
+extends_documentation_fragment:
+  - kpfleming.powerdns_auth.api_details
+
+options:
+  state:
+    description:
+      - If V(present) the rrset will be created unless it already exists
+        in which case if O(keep=false) records will be replaces and if
+        O(keep=true) new records will be added.
+      - If V(absent) and O(keep=false) the whole rrset will be deleted
+      - If V(absent) and O(keep=true) only the matching records will be
+        deleted
+      - If V(exists) a list of all rrsets in the zone will be returned
+      - If V(exists) and O(name) and/or O(type) existence will be checked
+        and matching rrsets will be returned
+    choices: [ 'present', 'absent', 'exists' ]
+    type: str
+    required: false
+    default: 'present'
+  name:
+    description:
+      - Name of the rrset
+      - Required if O(state=present) or 0(state=absent)
+    type: str
+  zone_name:
+    description:
+      - Name of the zone
+    type: str
+    required: true
+  server_id:
+    description:
+      - ID of the server managed.
+    type: str
+    default: localhost
+  api_url:
+    description:
+      - URL of the API of the PowerDNS Authoritative server.
+    type: str
+    default: 'http://localhost:8081'
+  api_spec_path:
+    description:
+      - API endpoint of the swagger ressource.
+    type: str
+    default: /api/docs
+  api_key:
+    description:
+      - Key of the PowerDNS API.
+    type: str
+    required: true
+  keep:
+    description:
+      - Whether or not to keep existing records.
+    type: bool
+    default: false
+  ttl:
+    description:
+      - TTL of the records, in seconds.
+    type: int
+    default: 3600
+  type:
+    description:
+      - Type of resource record (e.g. A, PTR, NSEC...).
+      - Required if O(state=absent) or O(state=presnet) and none of the record types options are
+        provided.
+    type: str
+  records:
+    description:
+      - Represents a list of records.
+      - Required if O(type) and O(state=present).
+    type: list
+    elements: dict
+    suboptions:
+      disabled:
+        description:
+          - Whether or not this record is disabled.
+        type: bool
+        default: false
+      content:
+        description:
+          - The content of resource record.
+        type: str
+        required: true
+  A:
+    description:
+      - Record of type A.
+      - Required if O(state=present) or O(state=absent) and O(type) and O(records)
+        and any of the other record type option not present.
+    type: list
+    elements: dict
+    suboptions:
+      address:
+        description:
+          - IPv4 address.
+        type: str
+        required: true
+      disabled:
+        description:
+          - Whether or not this record is disabled.
+        type: bool
+        default: false
+  AAAA:
+    description:
+      - Record of type AAAA.
+      - Required if O(state=present) or O(state=absent) and O(type) and O(records)
+        and any of the other record type option not present.
+    type: list
+    elements: dict
+    suboptions:
+      address:
+        description:
+          - IPv6 address.
+        type: str
+        required: true
+      disabled:
+        description:
+          - Whether or not this record is disabled.
+        type: bool
+        default: false
+  CAA:
+    description:
+      - Certificate Authority Authorization record.
+      - Required if O(state=present) or O(state=absent) and O(type) and O(records)
+        and any of the other record type option not present.
+    type: list
+    elements: dict
+    suboptions:
+      flag:
+        description:
+          - Critical flag for CAA record.
+        type: int
+        default: 0
+        choices: [0, 1]
+      tag:
+        description:
+          - Property tag for CAA record.
+        type: str
+        required: true
+        choices: ["issue", "issuewild", "iodef"]
+      value:
+        description:
+          - Property value for CAA record.
+        type: raw
+        required: true
+      disabled:
+        description:
+          - Whether or not this record is disabled.
+        type: bool
+        default: false
+  CNAME:
+    description:
+      - Canonical name record.
+      - Required if O(state=present) or O(state=absent) and O(type) and O(records)
+        and any of the other record type option not present.
+    type: list
+    elements: dict
+    suboptions:
+      cname:
+        description:
+          - Canonical domain name.
+        type: str
+        required: true
+      disabled:
+        description:
+          - Whether or not this record is disabled.
+        type: bool
+        default: false
+  DNSKEY:
+    description:
+      - DNS Key record for DNSSEC.
+      - Required if O(state=present) or O(state=absent) and O(type) and O(records)
+        and any of the other record type option not present.
+    type: list
+    elements: dict
+    suboptions:
+      flags:
+        description:
+          - Key flags field.
+        type: int
+        required: true
+        choices: [256, 257]
+      protocol:
+        description:
+          - Protocol field.
+        type: int
+        required: true
+        choices: [3]
+      algorithm:
+        description:
+          - Algorithm used for the key.
+        type: int
+        required: true
+      public_key:
+        description:
+          - Base64 encoded public key.
+        type: str
+        required: true
+      disabled:
+        description:
+          - Whether or not this record is disabled.
+        type: bool
+        default: false
+  DS:
+    description:
+      - Delegation Signer record for DNSSEC.
+      - Required if O(state=present) or O(state=absent) and O(type) and O(records)
+        and any of the other record type option not present.
+    type: list
+    elements: dict
+    suboptions:
+      key_tag:
+        description:
+          - Key tag field.
+        type: int
+        required: true
+      algorithm:
+        description:
+          - Algorithm used for signing.
+        type: int
+        required: true
+      digest_type:
+        description:
+          - Digest algorithm type.
+        type: int
+        required: true
+        choices: [1, 2, 3, 4]
+      digest:
+        description:
+          - Digest value.
+        type: str
+        required: true
+      disabled:
+        description:
+          - Whether or not this record is disabled.
+        type: bool
+        default: false
+  HINFO:
+    description:
+      - Host information record.
+      - Required if O(state=present) or O(state=absent) and O(type) and O(records)
+        and any of the other record type option not present.
+    type: list
+    elements: dict
+    suboptions:
+      cpu:
+        description:
+          - CPU type.
+        type: raw
+        required: true
+      os:
+        description:
+          - Operating system.
+        type: raw
+        required: true
+      disabled:
+        description:
+          - Whether or not this record is disabled.
+        type: bool
+        default: false
+  HTTPS:
+    description:
+      - HTTPS service binding record.
+      - Required if O(state=present) or O(state=absent) and O(type) and O(records)
+        and any of the other record type option not present.
+    type: list
+    elements: dict
+    suboptions:
+      priority:
+        description:
+          - Priority of the target host.
+        type: int
+        required: true
+      target:
+        description:
+          - Target hostname.
+        type: str
+        required: true
+      params:
+        description:
+          - Service parameters.
+        type: str
+      disabled:
+        description:
+          - Whether or not this record is disabled.
+        type: bool
+        default: false
+  LOC:
+    description:
+      - Location record.
+      - Required if O(state=present) or O(state=absent) and O(type) and O(records)
+        and any of the other record type option not present.
+    type: list
+    elements: dict
+    suboptions:
+      latitude:
+        description:
+          - Latitude coordinate.
+        type: str
+        required: true
+      longitude:
+        description:
+          - Longitude coordinate.
+        type: str
+        required: true
+      altitude:
+        description:
+          - Altitude coordinate.
+        type: str
+        required: true
+      size:
+        description:
+          - Size of the location.
+        type: str
+        default: "1.0m"
+      horizontal_precision:
+        description:
+          - Horizontal precision.
+        type: str
+        default: "10000.0m"
+      vertical_precision:
+        description:
+          - Vertical precision.
+        type: str
+        default: "10.0m"
+      disabled:
+        description:
+          - Whether or not this record is disabled.
+        type: bool
+        default: false
+  MX:
+    description:
+      - Mail exchange record.
+      - Required if O(state=present) or O(state=absent) and O(type) and O(records)
+        and any of the other record type option not present.
+    type: list
+    elements: dict
+    suboptions:
+      preference:
+        description:
+          - Priority preference for mail delivery.
+        type: int
+        required: true
+      exchange:
+        description:
+          - Mail server hostname.
+        type: str
+        required: true
+      disabled:
+        description:
+          - Whether or not this record is disabled.
+        type: bool
+        default: false
+  NAPTR:
+    description:
+      - Name Authority Pointer record.
+      - Required if O(state=present) or O(state=absent) and O(type) and O(records)
+        and any of the other record type option not present.
+    type: list
+    elements: dict
+    suboptions:
+      order:
+        description:
+          - Order field for processing records.
+        type: int
+        required: true
+      preference:
+        description:
+          - Preference field for records with same order.
+        type: int
+        required: true
+      flags:
+        description:
+          - Flags field.
+        type: raw
+        required: true
+      services:
+        description:
+          - Services field.
+        type: raw
+        required: true
+      regexp:
+        description:
+          - Regular expression for substitution.
+        type: raw
+        required: true
+      replacement:
+        description:
+          - Replacement domain name.
+        type: str
+        required: true
+      disabled:
+        description:
+          - Whether or not this record is disabled.
+        type: bool
+        default: false
+  NS:
+    description:
+      - Name server record.
+      - Required if O(state=present) or O(state=absent) and O(type) and O(records)
+        and any of the other record type option not present.
+    type: list
+    elements: dict
+    suboptions:
+      host:
+        description:
+          - Name server hostname.
+        type: str
+        required: true
+      disabled:
+        description:
+          - Whether or not this record is disabled.
+        type: bool
+        default: false
+  NSEC:
+    description:
+      - Next Secure record for DNSSEC.
+      - Required if O(state=present) or O(state=absent) and O(type) and O(records)
+        and any of the other record type option not present.
+    type: list
+    elements: dict
+    suboptions:
+      next_domain:
+        description:
+          - Next domain name in canonical order.
+        type: str
+        required: true
+      type_bitmap:
+        description:
+          - Bitmap of record types present.
+        type: str
+        required: true
+      disabled:
+        description:
+          - Whether or not this record is disabled.
+        type: bool
+        default: false
+  NSEC3PARAM:
+    description:
+      - NSEC3 parameters record for DNSSEC.
+      - Required if O(state=present) or O(state=absent) and O(type) and O(records)
+        and any of the other record type option not present.
+    type: list
+    elements: dict
+    suboptions:
+      hash_algorithm:
+        description:
+          - Hash algorithm used.
+        type: int
+        required: true
+        choices: [1]
+      flags:
+        description:
+          - Flags field.
+        type: int
+        required: true
+        choices: [0, 1]
+      iterations:
+        description:
+          - Number of hash iterations.
+        type: int
+        required: true
+      salt:
+        description:
+          - Salt value for hashing.
+        type: str
+        required: true
+      disabled:
+        description:
+          - Whether or not this record is disabled.
+        type: bool
+        default: false
+  PTR:
+    description:
+      - Pointer record for reverse DNS lookup.
+      - Required if O(state=present) or O(state=absent) and O(type) and O(records)
+        and any of the other record type option not present.
+    type: list
+    elements: dict
+    suboptions:
+      ptrdname:
+        description:
+          - Domain name for reverse lookup.
+        type: str
+        required: true
+      disabled:
+        description:
+          - Whether or not this record is disabled.
+        type: bool
+        default: false
+  RP:
+    description:
+      - Responsible person record.
+      - Required if O(state=present) or O(state=absent) and O(type) and O(records)
+        and any of the other record type option not present.
+    type: list
+    elements: dict
+    suboptions:
+      mbox:
+        description:
+          - Mailbox domain name of responsible person.
+        type: str
+        required: true
+      txt:
+        description:
+          - Domain name for TXT record with contact info.
+        type: str
+        required: true
+      disabled:
+        description:
+          - Whether or not this record is disabled.
+        type: bool
+        default: false
+  SPF:
+    description:
+      - Sender Policy Framework record.
+      - Required if O(state=present) or O(state=absent) and O(type) and O(records)
+        and any of the other record type option not present.
+    type: list
+    elements: dict
+    suboptions:
+      strings:
+        description:
+          - SPF policy strings.
+        type: raw
+        required: true
+      disabled:
+        description:
+          - Whether or not this record is disabled.
+        type: bool
+        default: false
+  SOA:
+    description:
+      - Start of Authority record.
+      - Required if O(state=present) or O(state=absent) and O(type) and O(records)
+        and any of the other record type option not present.
+    type: list
+    elements: dict
+    suboptions:
+      mname:
+        description:
+          - Primary master name server.
+        type: str
+        required: true
+      rname:
+        description:
+          - Email address of zone administrator.
+        type: str
+        required: true
+      serial:
+        description:
+          - Serial number of the zone.
+        type: int
+      refresh:
+        description:
+          - Refresh interval in seconds.
+        type: int
+      retry:
+        description:
+          - Retry interval in seconds.
+        type: int
+      expire:
+        description:
+          - Expire time in seconds.
+        type: int
+      minimum:
+        description:
+          - Minimum TTL in seconds.
+        type: int
+      disabled:
+        description:
+          - Whether or not this record is disabled.
+        type: bool
+        default: false
+  SRV:
+    description:
+      - Service record.
+      - Required if O(state=present) or O(state=absent) and O(type) and O(records)
+        and any of the other record type option not present.
+    type: list
+    elements: dict
+    suboptions:
+      priority:
+        description:
+          - Priority of the target host.
+        type: int
+        required: true
+      weight:
+        description:
+          - Relative weight for records with same priority.
+        type: int
+        required: true
+      port:
+        description:
+          - TCP or UDP port number.
+        type: int
+        required: true
+      target:
+        description:
+          - Target hostname.
+        type: str
+        required: true
+      disabled:
+        description:
+          - Whether or not this record is disabled.
+        type: bool
+        default: false
+  SSHFP:
+    description:
+      - SSH fingerprint record.
+      - Required if O(state=present) or O(state=absent) and O(type) and O(records)
+        and any of the other record type option not present.
+    type: list
+    elements: dict
+    suboptions:
+      algorithm:
+        description:
+          - SSH key algorithm.
+        type: int
+        required: true
+        choices: [1, 2, 3, 4, 6]
+      fp_type:
+        description:
+          - Fingerprint type.
+        type: int
+        required: true
+        choices: [1, 2, 3]
+      fingerprint:
+        description:
+          - SSH key fingerprint.
+        type: str
+        required: true
+      disabled:
+        description:
+          - Whether or not this record is disabled.
+        type: bool
+        default: false
+  SVCB:
+    description:
+      - Service binding record.
+      - Required if O(state=present) or O(state=absent) and O(type) and O(records)
+        and any of the other record type option not present.
+    type: list
+    elements: dict
+    suboptions:
+      priority:
+        description:
+          - Priority of the target host.
+        type: int
+        required: true
+      target:
+        description:
+          - Target hostname.
+        type: str
+        required: true
+      params:
+        description:
+          - Service parameters.
+        type: str
+      disabled:
+        description:
+          - Whether or not this record is disabled.
+        type: bool
+        default: false
+  TLSA:
+    description:
+      - Transport Layer Security Authentication record.
+      - Required if O(state=present) or O(state=absent) and O(type) and O(records)
+        and any of the other record type option not present.
+    type: list
+    elements: dict
+    suboptions:
+      usage:
+        description:
+          - Certificate usage.
+        type: int
+        required: true
+        choices: [0, 1, 2, 3]
+      selector:
+        description:
+          - Selector field.
+        type: int
+        required: true
+        choices: [0, 1]
+      matching_type:
+        description:
+          - Matching type.
+        type: int
+        required: true
+        choices: [0, 1, 2]
+      cert_assoc_data:
+        description:
+          - Certificate association data.
+        type: str
+        required: true
+      disabled:
+        description:
+          - Whether or not this record is disabled.
+        type: bool
+        default: false
+  TXT:
+    description:
+      - Text record.
+      - Required if O(state=present) or O(state=absent) and O(type) and O(records)
+        and any of the other record type option not present.
+    type: list
+    elements: dict
+    suboptions:
+      strings:
+        description:
+          - Text strings.
+        type: raw
+        required: true
+      disabled:
+        description:
+          - Whether or not this record is disabled.
+        type: bool
+        default: false
+
+
+author: Mohamed Chamrouk (@mohamed-chamrouk)
 """
 
 EXAMPLES = """
 %YAML 1.2
 ---
+- name: Creating a rrset of record type A
+  kpfleming.powerdns_auth.rrset:
+    api_key: foo
+    zone_name: zone.example.
+    name: ns.zone.example.
+    type: A
+    record:
+      - content: 192.168.0.1
+
+- name: Creating a rrset of record type A
+  kpfleming.powerdns_auth.rrset:
+    api_key: foo
+    zone_name: zone.example.
+    name: ns.zone.example.
+    A:
+      - address: 192.168.0.1
+
+- name: Deleting rrset
+  kpfleming.powerdns_auth.rrset:
+    api_key: foo
+    zone_name: zone.example.
+    name: ns.zone.example.
+    type: A
+
+- name: Replacing records in rrset
+  kpfleming.powerdns_auth.rrset:
+    api_key: foo
+    zone_name: zone.example.
+    name: ns.zone.example.
+    A:
+      - address: 192.168.1.1
+
+- name: Updating records in rrset
+  kpfleming.powerdns_auth.rrset:
+    api_key: foo
+    zone_name: zone.example.
+    name: ns.zone.example.
+    keep: true
+    NS:
+      - host: ns1.example.
+
+- name: Deleting records in rrset
+  kpfleming.powerdns_auth.rrset:
+    api_key: foo
+    zone_name: zone.example.
+    name: ns.zone.example.
+    state: absent
+    keep: true
+    NS:
+      - host: ns1.example.
+
+- name: Listing all rrsets in zone
+  kpfleming.powerdns_auth.rrset:
+    api_key: foo
+    zone_name: zone.example.
+    state: exists
 """
 
 RETURN = """
 %YAML 1.2
 ---
+name:
+  description: name of the rrset
+  returned: always
+  type: str
+  sample: rrset.example.
+exists:
+  description: whether the provided name and type lead to existing rrset(s)
+  returned: when state is exists and name and/or type provided
+  type: bool
+rrset:
+  description: single rrset resource
+  returned: when state is exists and name and type are provided
+  type: dict
+  contains:
+    comments:
+      description:
+        - list of comments on the rrset
+      type: list
+      elemnts: str
+    name:
+      description:
+        - name of the rrset
+      type: str
+    records:
+      description:
+        - list of the records
+      type: list
+      elements: str
+    ttl:
+      description:
+        - TTL of the records, in seconds.
+      type: int
+    type:
+      description:
+        - type of the record
+      type: str
+rrsets:
+  description: list of existing rrsets or rrsets after changes are made
+  returned: always except when rrset conditions are fulfilled
+  type: list
+  contains:
+    comments:
+      description:
+        - list of comments on the rrset
+      type: list
+      elemnts: str
+    name:
+      description:
+        - name of the rrset
+      type: str
+    records:
+      description:
+        - list of the records
+      type: list
+      elements: str
+    ttl:
+      description:
+        - TTL of the records, in seconds.
+      type: int
+    type:
+      description:
+        - type of the record
+      type: str
 """
 
 
@@ -57,7 +903,13 @@ class APIZoneRRSetWrapper(APIWrapper):
             **kwargs,
         ).result()
 
+
 def get_result_rrsets(rrsets, rrset_name, rrset_type):
+    """
+    Function to build the return object to the ansible module.
+    rrsets refers to the existings rrsets.
+    rrset_name and rrset_type can be None, if provided it will filter rrsets based on those.
+    """
     r = {
         "rrsets": rrsets,
     }
@@ -84,14 +936,14 @@ def get_result_rrsets(rrsets, rrset_name, rrset_type):
                     r["rrsets"] += [rrset]
                     r["exists"] = True
     elif rrset_type is not None:
-            r = {
-                "exists": False,
-                "rrsets": [],
-            }
-            for rrset in rrsets:
-                if rrset["type"] == rrset_type:
-                    r["rrsets"] += [rrset]
-                    r["exists"] = True
+        r = {
+            "exists": False,
+            "rrsets": [],
+        }
+        for rrset in rrsets:
+            if rrset["type"] == rrset_type:
+                r["rrsets"] += [rrset]
+                r["exists"] = True
 
     return r
 
@@ -101,6 +953,10 @@ def get_rrsets(api_client):
 
 
 def safe_string_record(record_type, record, type_def):
+    """
+    PowerDNS expects some field of some records to have quotes.
+    Said fields have type "raw", allowing for filtering.
+    """
     record_spec = type_def[record_type]
 
     safe_record = record
@@ -189,8 +1045,12 @@ def main():
             "type": "list",
             "elements": "dict",
             "options": {
-                "flags": {"type": "int", "required": False, "default": 0, "choices": [0, 1]},
-                "tag": {"type": "str", "required": True},
+                "flag": {"type": "int", "required": False, "default": 0, "choices": [0, 1]},
+                "tag": {
+                    "type": "str",
+                    "required": True,
+                    "choices": ["issue", "issuewild", "iodef"],
+                },
                 "value": {"type": "raw", "required": True},
                 "disabled": {"type": "bool", "required": False, "default": False},
             },
@@ -424,15 +1284,19 @@ def main():
         "TXT",
     ]
 
+    # mutually_exclusive : prevent use of type and A,AAAA... at the same time
+    # require_if : if state is absent, one of type,A,AAAA is required and so on
     module = AnsibleModule(
         argument_spec=module_args,
-        supports_check_mode=True,
+        supports_check_mode=False,
         mutually_exclusive=[(record_type, "records") for record_type in record_types]
         + [(record_type, "type") for record_type in record_types],
-        required_if=[("state", "absent", record_types + ["type"], True),
+        required_if=[
+            ("state", "absent", record_types + ["type"], True),
             ("state", "present", ["name"]),
             ("state", "absent", ["name"]),
-            ("state", "present", record_types+["type"], True)],
+            ("state", "present", record_types + ["type"], True),
+        ],
     )
 
     state = module.params["state"]
@@ -455,15 +1319,12 @@ def main():
     if len(partial_zone_info) == 0:
         module.fail_json(f"Failed to find zone named {zone_name}")
 
-    # get the full zone info and populate the result dict
+    # get the zone_id from the zone_name
     zone_id = partial_zone_info[0]["id"]
     api_client.zone_id = zone_id
     params = module.params
 
-    result.update({
-        "name": params["name"],
-        "zone_name": params["zone_name"]
-    })
+    result.update({"name": params["name"]})
 
     zone_rrsets = get_rrsets(api_client)
     result_rrsets = get_result_rrsets(zone_rrsets, params["name"], params["type"])
@@ -473,6 +1334,7 @@ def main():
         module.exit_json(**result)
 
     changetype = "REPLACE" if state == "present" else "DELETE"
+    # following variable refers to the DNS Record types options (A,AAAA,CAA...)
     rrset_record_types = list(set([p for p in params if params[p] is not None]) & set(record_types))
 
     # Check couldn't fit in AnsibleModule args
@@ -532,11 +1394,7 @@ def main():
         # Retrieving existing rrset, there can only be one
         # that matches "name" and "type" values.
         existing_rrset = next(
-            (
-                r
-                for r in zone_rrsets
-                if r["name"] == rrset["name"] and r["type"] == rrset["type"]
-            ),
+            (r for r in zone_rrsets if r["name"] == rrset["name"] and r["type"] == rrset["type"]),
             None,
         )
 
@@ -547,6 +1405,8 @@ def main():
 
         if not existing_rrset or not rrset_keep:
             if rrset_changetype == "REPLACE":
+                # For REPLACE, not wanting to keep existing records or not having any existing
+                # records is the same
                 if rrset["type"] is not None:
                     zone_struct.setdefault("rrsets", []).append(rrset)
                 else:
