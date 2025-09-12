@@ -49,7 +49,7 @@ options:
   name:
     description:
       - Name of the rrset
-      - Required if O(state=present) or 0(state=absent)
+      - Required if O(state=present) or O(state=absent)
     type: str
   zone_name:
     description:
@@ -89,7 +89,7 @@ options:
   type:
     description:
       - Type of resource record (e.g. A, PTR, NSEC...).
-      - Required if O(state=absent) or O(state=presnet) and none of the record types options are
+      - Required if O(state=absent) or O(state=present) and none of the record types options are
         provided.
     type: str
   records:
@@ -757,7 +757,7 @@ EXAMPLES = """
     zone_name: zone.example.
     name: ns.zone.example.
     type: A
-    record:
+    records:
       - content: 192.168.0.1
 
 - name: Creating a rrset of record type A
@@ -1285,8 +1285,8 @@ def main():
         "TXT",
     ]
 
-    # mutually_exclusive : prevent use of type and A,AAAA... at the same time
-    # require_if : if state is absent, one of type,A,AAAA is required and so on
+    # mutually_exclusive: prevent use of type and A,AAAA... at the same time
+    # require_if: if state is absent, one of type, A, AAAA is required and so on
     module = AnsibleModule(
         argument_spec=module_args,
         supports_check_mode=False,
@@ -1335,7 +1335,7 @@ def main():
         module.exit_json(**result)
 
     changetype = "REPLACE" if state == "present" else "DELETE"
-    # following variable refers to the DNS Record types options (A,AAAA,CAA...)
+    # The following variable refers to the DNS Record types options (A,AAAA,CAA...)
     rrset_record_types = set(p for p in params if params[p] is not None) & set(record_types)  # noqa: C401
 
     # Check couldn't fit in AnsibleModule args
@@ -1427,7 +1427,7 @@ def main():
             # If the changetype is "REPLACE",
             # nothing is done for the rest of the rrset
             if rrset_changetype == "DELETE":
-                # Using .setdefault to avoid creating a key on dict zone_struct
+                # Using .setdefault to avoid creating a key on zone_struct dict
                 # and keep the dict empty for idempotency
                 zone_struct.setdefault("rrsets", []).append(
                     {

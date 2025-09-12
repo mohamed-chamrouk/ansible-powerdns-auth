@@ -60,7 +60,7 @@ def api_exception_handler(func):
         try:
             return func(self, *args, **kwargs)
         except self.api_exceptions_to_catch as e:
-            # The error 404 doesn't returns a simple string, not a dict hence the following line
+            # The 404 error returns a simple string, not a dict hence the following line
             err_msg = (
                 e.swagger_result if "error" not in e.swagger_result else e.swagger_result["error"]  # noqa: SIM401
             )

@@ -42,11 +42,6 @@ options:
     type: str
     required: false
     default: 'present'
-  name:
-    description:
-      - Name of the rrset
-      - Required if O(state=present) or 0(state=absent)
-    type: str
   zone_name:
     description:
       - Name of the zone
@@ -64,7 +59,7 @@ options:
     default: 'http://localhost:8081'
   api_spec_path:
     description:
-      - API endpoint of the swagger ressource.
+      - API endpoint of the swagger resource.
     type: str
     default: /api/docs
   api_key:
@@ -75,6 +70,7 @@ options:
   cryptokey_id:
     description:
       - The cryptokey id.
+    type: str
   cryptokey:
     description:
       - Cryptokey object definition.
@@ -108,7 +104,7 @@ options:
         type: str
       privatekey:
         description:
-          - The privatekey is ISC format.
+          - The privatekey in ISC format.
           - Required if O(dnskey)
         type: str
       algorithm:
@@ -146,9 +142,10 @@ EXAMPLES = """
     cryptokey:
       keytype: zsk
       dnskey: "257 3 15 lMu/7quhLeSueMcdlt3T0sxln32yhrhASCKKDB1xJOk="
-      privatekey: 'Private-key-format: v1.2\n
-                   Algorithm: 15 (ED25519)\n
-                   PrivateKey: Rnt2dv3mWMmP8bU/8koayZ4R5dWdI86zJmZ0nnjPe6Q=\n'
+      privatekey: |
+        Private-key-format: v1.2
+        Algorithm: 15 (ED25519)
+        PrivateKey: Rnt2dv3mWMmP8bU/8koayZ4R5dWdI86zJmZ0nnjPe6Q=
       active: true
 
 - name: Delete key
@@ -209,7 +206,7 @@ cryptokey:
       description: the dnskey record
       type: str
     ds:
-      description: when key is ksk or csk used to create the DS record on the parent zone
+      description: when key is ksk or csk, used to create the DS record on the parent zone
       type: list
       elements: str
     flags:
@@ -247,7 +244,7 @@ cryptokeys:
       description: the dnskey record
       type: str
     ds:
-      description: when key is ksk or csk used to create the DS record on the parent zone
+      description: when key is ksk or csk, used to create the DS record on the parent zone
       type: list
       elements: str
     flags:
