@@ -153,7 +153,7 @@ options:
     type: list
     elements: dict
     suboptions:
-      flag:
+      flags:
         description:
           - Critical flag for CAA record.
         type: int
@@ -1046,7 +1046,7 @@ def main():
             "type": "list",
             "elements": "dict",
             "options": {
-                "flag": {"type": "int", "required": False, "default": 0, "choices": [0, 1]},
+                "flags": {"type": "int", "required": False, "default": 0, "choices": [0, 1]},
                 "tag": {
                     "type": "str",
                     "required": True,
@@ -1293,10 +1293,10 @@ def main():
         mutually_exclusive=[(record_type, "records") for record_type in record_types]
         + [(record_type, "type") for record_type in record_types],
         required_if=[
-            ("state", "absent", record_types + ["type"], True),
+            ("state", "absent", [*record_types, "type"], True),
             ("state", "present", ["name"]),
             ("state", "absent", ["name"]),
-            ("state", "present", record_types + ["type"], True),
+            ("state", "present", [*record_types, "type"], True),
         ],
     )
 
@@ -1336,7 +1336,7 @@ def main():
 
     changetype = "REPLACE" if state == "present" else "DELETE"
     # following variable refers to the DNS Record types options (A,AAAA,CAA...)
-    rrset_record_types = list(set([p for p in params if params[p] is not None]) & set(record_types))
+    rrset_record_types = set([p for p in params if params[p] is not None]) & set(record_types)
 
     # Check couldn't fit in AnsibleModule args
     type_classic = "type" in params and "records" in params
@@ -1346,15 +1346,15 @@ def main():
     if rrset_record_types:
         rrset_records = [
             {
-                "type": type,
+                "type": record_type,
                 "records": [
                     safe_string_record(
-                        type, record, {type: module_args[type] for type in record_types}
+                        record_type, record, {t: module_args[t] for t in record_types}
                     )
-                    for record in params[type]
+                    for record in params[record_type]
                 ],
             }
-            for type in rrset_record_types
+            for record_type in rrset_record_types
         ]
 
         rrsets_struct = []

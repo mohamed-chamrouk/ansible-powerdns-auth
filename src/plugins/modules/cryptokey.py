@@ -146,7 +146,7 @@ EXAMPLES = """
     cryptokey:
       keytype: zsk
       dnskey: "257 3 15 lMu/7quhLeSueMcdlt3T0sxln32yhrhASCKKDB1xJOk="
-      privatekey: "Private-key-format: v1.2\nAlgorithm: 15 (ED25519)\nPrivateKey: Rnt2dv3mWMmP8bU/8koayZ4R5dWdI86zJmZ0nnjPe6Q=\n"
+      privatekey: "Private-key-format: v1.2\nAlgorithm: 15 (ED25519)\nPrivateKey: Rnt2dv3mWMmP8bU/8koayZ4R5dWdI86zJmZ0nnjPe6Q=\n" # noqa E501
       active: true
 
 - name: Delete key
@@ -310,7 +310,7 @@ class APICryptokeyWrapper(APIWrapper):
         ).result()
 
     @api_exception_handler
-    def deleteCryptokey(self, **kwargs):  # noqa: N802
+    def deleteCryptokey(self):  # noqa: N802
         return self.raw_api.deleteCryptokey(
             server_id=self.server_id, zone_id=self.zone_id, cryptokey_id=self.cryptokey_id
         ).result()
