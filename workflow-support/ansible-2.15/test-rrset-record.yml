@@ -59,10 +59,14 @@
     - name: check creating each type of supported DNS record
       ansible.builtin.include_tasks:
         file: test-rrset-all-types.yml
+      tags:
+        - skip_ansible_lint
 
     - name: check creating each type of supported DNSSEC record
       ansible.builtin.include_tasks:
         file: test-rrset-all-dnssec-types.yml
+      tags:
+        - skip_ansible_lint
 
     - name: check deleting existing rrset
       kpfleming.powerdns_auth.rrset:

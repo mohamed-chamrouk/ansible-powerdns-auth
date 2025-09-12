@@ -148,7 +148,7 @@ EXAMPLES = """
       dnskey: "257 3 15 lMu/7quhLeSueMcdlt3T0sxln32yhrhASCKKDB1xJOk="
       privatekey: 'Private-key-format: v1.2\n
                    Algorithm: 15 (ED25519)\n
-                   PrivateKey: Rnt2dv3mWMmP8bU/8koayZ4R5dWdI86zJmZ0nnjPe6Q=\n"
+                   PrivateKey: Rnt2dv3mWMmP8bU/8koayZ4R5dWdI86zJmZ0nnjPe6Q=\n'
       active: true
 
 - name: Delete key
