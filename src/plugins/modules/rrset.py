@@ -1336,7 +1336,7 @@ def main():
 
     changetype = "REPLACE" if state == "present" else "DELETE"
     # following variable refers to the DNS Record types options (A,AAAA,CAA...)
-    rrset_record_types = set(p for p in params if params[p] is not None) & set(record_types)
+    rrset_record_types = set(p for p in params if params[p] is not None) & set(record_types)  # noqa C401
 
     # Check couldn't fit in AnsibleModule args
     type_classic = "type" in params and "records" in params
@@ -1385,7 +1385,7 @@ def main():
                 "ttl": params["ttl"],
                 "keep": params["keep"],
                 "changetype": changetype,
-                "records": params["records"] if "records" in params else [],
+                "records": params.get("records", []),
             }
         ]
 
@@ -1417,7 +1417,8 @@ def main():
                     zone_struct.setdefault("rrsets", []).append(rrset)
                 else:
                     module.fail_json(
-                        f"No matching rrset found for name: {rrset['name']} and type: {rrset['type']}"
+                        f"No matching rrset found for name: {rrset['name']} \
+                          and type: {rrset['type']}"
                     )
         elif rrset["records"] == existing_rrset["records"]:
             # Despite keep being present, if existing records and given ones match

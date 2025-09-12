@@ -607,10 +607,6 @@ class APIZoneWrapper(APIWrapper):
             **kwargs,
         ).result()
 
-    @api_exception_handler
-    def rectifyZone(self):
-        return self.raw_api.rectifyZone(server_id=self.server_id, zone_id=self.zone_id).result()
-
 
 class APIZoneMetadataWrapper(APIWrapper):
     def __init__(self, *, module, result, object_type, zone_id):
@@ -1340,13 +1336,6 @@ def main():
     # the operation is complete
     if state == "exists":
         module.exit_json(**result)
-
-    # the powerdns' swagger is misconfigured for this operation
-    # expects a dict but a string is returned instead
-    # if state == "rectify":
-    #    api_zone_client.rectifyZone()
-    #    result["changed"] = True
-    #    module.exit_json(**result)
 
     # if absence was requested, remove the zone and exit
     if state == "absent":
