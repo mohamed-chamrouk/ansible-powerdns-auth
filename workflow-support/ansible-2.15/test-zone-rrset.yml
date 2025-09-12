@@ -35,7 +35,7 @@
     - ansible.builtin.assert:
         quiet: true
         that:
-          - '"exception" not in result'
+          - result['exception'] is not defined
           - not result.failed
           - result.changed
           - d1_rrset[0]['type'] == 'A'
@@ -69,7 +69,7 @@
     - ansible.builtin.assert:
         quiet: true
         that:
-          - '"exception" not in result'
+          - result['exception'] is not defined
           - result.changed
 
     - name: check for failure when rrset includes SOA
@@ -95,7 +95,7 @@
     - ansible.builtin.assert:
         quiet: true
         that:
-          - '"exception" not in result'
+          - result['exception'] is not defined
           - result.failed
 
     - name: check zone creation of a zone with more than one rrset
@@ -130,7 +130,7 @@
     - ansible.builtin.assert:
         quiet: true
         that:
-          - '"exception" not in result'
+          - result['exception'] is not defined
           - not result.failed
           - result.changed
           - (t1_d4_rrset | length) == 4
@@ -170,7 +170,7 @@
     - ansible.builtin.assert:
         quiet: true
         that:
-          - '"exception" not in result'
+          - result['exception'] is not defined
           - not result.failed
           - result.changed
           - d5_rrset['ttl'] == 900
@@ -203,7 +203,7 @@
     - ansible.builtin.assert:
         quiet: true
         that:
-          - '"exception" not in result'
+          - result['exception'] is not defined
           - not result.failed
           - result.changed
           - '"192.168.1.2" not in d6_rrset'
