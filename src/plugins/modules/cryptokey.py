@@ -283,14 +283,14 @@ class APICryptokeyWrapper(APIWrapper):
         self.cryptokey_id = cryptokey_id
 
     @api_exception_handler
-    def listCryptokeys(self):
+    def listCryptokeys(self):  # noqa: N802
         return self.raw_api.listCryptokeys(
             server_id=self.server_id,
             zone_id=self.zone_id,
         ).result()
 
     @api_exception_handler
-    def createCryptokey(self, **kwargs):
+    def createCryptokey(self, **kwargs):  # noqa: N802
         return self.raw_api.createCryptokey(
             server_id=self.server_id,
             zone_id=self.zone_id,
@@ -298,19 +298,19 @@ class APICryptokeyWrapper(APIWrapper):
         ).result()
 
     @api_exception_handler
-    def getCryptokey(self):
+    def getCryptokey(self):  # noqa: N802
         return self.raw_api.getCryptokey(
             server_id=self.server_id, zone_id=self.zone_id, cryptokey_id=self.cryptokey_id
         ).result()
 
     @api_exception_handler
-    def modifyCryptokey(self, **kwargs):
+    def modifyCryptokey(self, **kwargs):  # noqa: N802
         return self.raw_api.modifyCryptokey(
             server_id=self.server_id, zone_id=self.zone_id, cryptokey_id=self.cryptokey_id, **kwargs
         ).result()
 
     @api_exception_handler
-    def deleteCryptokey(self, **kwargs):
+    def deleteCryptokey(self, **kwargs):  # noqa: N802
         return self.raw_api.deleteCryptokey(
             server_id=self.server_id, zone_id=self.zone_id, cryptokey_id=self.cryptokey_id
         ).result()
@@ -438,7 +438,8 @@ def main():
                 }
             else:
                 module.fail_json(
-                    msg=f"Key of id {params['cryptokey_id']} not found for zone {params['zone_name']}",
+                  msg=f"Key of id {params['cryptokey_id']} not found \
+                          for zone {params['zone_name']}",
                     **result,
                 )
 
