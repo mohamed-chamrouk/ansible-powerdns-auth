@@ -438,7 +438,7 @@ def main():
                 }
             else:
                 module.fail_json(
-                  msg=f"Key of id {params['cryptokey_id']} not found \
+                    msg=f"Key of id {params['cryptokey_id']} not found \
                           for zone {params['zone_name']}",
                     **result,
                 )
