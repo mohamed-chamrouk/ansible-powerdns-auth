@@ -6,10 +6,6 @@ on:
       - main
   schedule:
     - cron: "35 4 * * 6"
-  push:
-    branches:
-      - test-actions
-      - record-types
 
 jobs:
   preflight:
