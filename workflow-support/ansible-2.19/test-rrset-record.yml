@@ -20,7 +20,7 @@
     - name: Creating template for all rrset types
       ansible.builtin.template:
         src: ./template/all-rrset-types.yml.j2
-        dest: ./test-rrset-all-types.yml
+        dest: ./template/test-rrset-all-types.yml
         mode: "644"
 
     - ansible.builtin.set_fact:
@@ -29,7 +29,7 @@
     - name: Creating template for all rrset dnssec types
       ansible.builtin.template:
         src: ./template/all-rrset-types.yml.j2
-        dest: ./test-rrset-all-dnssec-types.yml
+        dest: ./template/test-rrset-all-dnssec-types.yml
         mode: "644"
 
     - name: check "Native" zone creation
@@ -58,15 +58,11 @@
   tasks:
     - name: check creating each type of supported DNS record
       ansible.builtin.include_tasks:
-        file: test-rrset-all-types.yml
-      tags:
-        - skip_ansible_lint
+        file: ./template/test-rrset-all-types.yml
 
     - name: check creating each type of supported DNSSEC record
       ansible.builtin.include_tasks:
-        file: test-rrset-all-dnssec-types.yml
-      tags:
-        - skip_ansible_lint
+        file: ./template/test-rrset-all-dnssec-types.yml
 
     - name: check deleting existing rrset
       kpfleming.powerdns_auth.rrset:
