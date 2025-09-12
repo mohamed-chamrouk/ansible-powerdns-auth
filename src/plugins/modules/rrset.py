@@ -830,7 +830,7 @@ rrset:
       description:
         - list of comments on the rrset
       type: list
-      elemnts: str
+      elements: str
     name:
       description:
         - name of the rrset
@@ -852,12 +852,13 @@ rrsets:
   description: list of existing rrsets or rrsets after changes are made
   returned: always except when rrset conditions are fulfilled
   type: list
+  elements: dict
   contains:
     comments:
       description:
         - list of comments on the rrset
       type: list
-      elemnts: str
+      elements: str
     name:
       description:
         - name of the rrset
