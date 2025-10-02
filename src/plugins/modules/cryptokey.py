@@ -291,7 +291,7 @@ def main():
     module = AnsibleModule(
         argument_spec=module_args,
         supports_check_mode=True,
-        required_if=(("state", "present", ["keytype", "active", "published"]),
+        required_if=(("state", "present", ["keytype", "active", "published"], True),
                      ("state", "absent", ["id"])),
     )
 
