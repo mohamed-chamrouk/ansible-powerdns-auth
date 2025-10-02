@@ -59,7 +59,6 @@
           - not result.failed
           - not result.exists
           - not result.changed
-          - result.cryptokey == {}
           - result.cryptokeys == []
           - output == ""
       vars:
