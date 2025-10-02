@@ -10,7 +10,6 @@ from ansible_collections.kpfleming.powerdns_auth.plugins.module_utils.api_wrappe
     APIWrapper,
     api_exception_handler,
 )
-from .zone import APIZoneWrapper
 
 assert sys.version_info >= (3, 9), "This module requires Python 3.9 or newer."
 
@@ -200,6 +199,14 @@ cryptokeys:
       type: str
 """
 
+class APIZoneWrapper(APIWrapper):
+    def __init__(self, *, module, result, object_type, zone_id):
+        super().__init__(module=module, result=result, object_type=object_type)
+        self.zone_id = zone_id
+
+    @api_exception_handler
+    def listZones(self, **kwargs):  # noqa: N802
+        return self.raw_api.listZones(server_id=self.server_id, **kwargs).result()
 
 class APICryptokeyWrapper(APIWrapper):
     def __init__(self, *, module, result, object_type, zone_id, id):
