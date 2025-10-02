@@ -69,10 +69,9 @@
       kpfleming.powerdns_auth.cryptokey:
         <<: *common
         state: present
-        cryptokey:
-          keytype: csk
-          algorithm: ed25519
-          active: true
+        keytype: csk
+        algorithm: ed25519
+        active: true
       register: result
     - <<: *refresh
     - ansible.builtin.assert:
@@ -104,7 +103,6 @@
           - not result.failed
           - result.changed
           - result.cryptokeys == []
-          - result.cryptokey == {}
           - output == ""
       vars:
         output: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=false, real_empty=false) }}"
@@ -113,11 +111,10 @@
       kpfleming.powerdns_auth.cryptokey:
         <<: *common
         state: present
-        cryptokey:
-          keytype: zsk
-          dnskey: "257 3 15 lMu/7quhLeSueMcdlt3T0sxln32yhrhASCKKDB1xJOk="
-          privatekey: "Private-key-format: v1.2\nAlgorithm: 15 (ED25519)\nPrivateKey: Rnt2dv3mWMmP8bU/8koayZ4R5dWdI86zJmZ0nnjPe6Q=\n"
-          active: true
+        keytype: zsk
+        dnskey: "257 3 15 lMu/7quhLeSueMcdlt3T0sxln32yhrhASCKKDB1xJOk="
+        privatekey: "Private-key-format: v1.2\nAlgorithm: 15 (ED25519)\nPrivateKey: Rnt2dv3mWMmP8bU/8koayZ4R5dWdI86zJmZ0nnjPe6Q=\n"
+        active: true
       register: result
     - <<: *refresh
     # For the following test : by default, when creating a key and it's the only one present
@@ -152,9 +149,10 @@
           - not result.failed
           - not result.changed
           - result.exists
-          - result.cryptokey["active"] == true
-          - result.cryptokey["keytype"] == "csk"
-          - '"lMu/7quhLeSueMcdlt3T0sxln32yhrhASCKKDB1xJOk=" in result.cryptokey["dnskey"]'
+          - (result.cryptokeys | length) == 1
+          - result.cryptokeys[0]["active"] == true
+          - result.cryptokeys[0]["keytype"] == "csk"
+          - '"lMu/7quhLeSueMcdlt3T0sxln32yhrhASCKKDB1xJOk=" in result.cryptokeys[0]["dnskey"]'
 
     - name: check listing of all keys
       block:
@@ -162,10 +160,9 @@
           kpfleming.powerdns_auth.cryptokey:
             <<: *common
             state: present
-            cryptokey:
-              active: false
-              keytype: ksk
-              algorithm: ed25519
+            active: false
+            keytype: ksk
+            algorithm: ed25519
           register: cryptokey
         - name: getting keys
           kpfleming.powerdns_auth.cryptokey:
@@ -180,7 +177,6 @@
           - not result.changed
           - result.exists
           - (result.cryptokeys | length) == 2
-          - result.cryptokey == {}
           - cryptokey.changed
 
     - name: deleting key for following tests
@@ -196,8 +192,7 @@
             <<: *common
             state: present
             id: 2
-            cryptokey:
-              active: true
+            active: true
           register: cryptokey
         - kpfleming.powerdns_auth.cryptokey:
             <<: *common
@@ -212,7 +207,7 @@
           - result['exception'] is not defined
           - not cryptokey.failed
           - not result.failed
-          - result.cryptokey.active == true
+          - result.cryptokeys[0]['active'] == true
           - output["algorithm"] == 15
       vars:
         output: "{{ lookup('dig_local', 'cryptokeys.example.', qtype='DNSKEY', flat=0, fail_on_error=false, real_empty=false) | tojson }}"
@@ -248,10 +243,9 @@
       kpfleming.powerdns_auth.cryptokey:
         <<: *common
         state: present
-        cryptokey:
-          keytype: zsk
-          dnskey: "257 3 15 lMu/7quhLeSueMcdlt3T0sxln32yhrhASCKKDB1xJOk="
-          active: true
+        keytype: zsk
+        dnskey: "257 3 15 lMu/7quhLeSueMcdlt3T0sxln32yhrhASCKKDB1xJOk="
+        active: true
       ignore_errors: true
       register: result
     - ansible.builtin.assert:
@@ -264,9 +258,8 @@
       kpfleming.powerdns_auth.cryptokey:
         <<: *common
         state: present
-        cryptokey:
-          algorithm: ed25519
-          active: true
+        algorithm: ed25519
+        active: true
       ignore_errors: true
       register: result
     - ansible.builtin.assert:

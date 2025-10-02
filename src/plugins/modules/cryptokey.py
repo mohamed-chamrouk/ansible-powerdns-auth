@@ -10,7 +10,8 @@ from ansible_collections.kpfleming.powerdns_auth.plugins.module_utils.api_wrappe
     APIWrapper,
     api_exception_handler,
 )
-from ansible_collections.kpfleming.powerdns_auth.plugins.modules.zone import APIZoneWrapper
+#from ansible_collections.kpfleming.powerdns_auth.plugins.modules.zone import APIZoneWrapper
+from plugins.modules.zone import APIZoneWrapper
 
 assert sys.version_info >= (3, 9), "This module requires Python 3.9 or newer."
 
