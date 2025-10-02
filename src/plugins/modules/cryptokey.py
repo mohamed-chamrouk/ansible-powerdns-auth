@@ -53,22 +53,22 @@ options:
     type: str
   keytype:
     description:
-      - The type of key, either zone signing key (zsk), key signing key (ksk)
+      - The type of CryptoKey, either zone signing key (zsk), key signing key (ksk)
         or combined signing key (csk)
-      - Note that by default if only one key is present it will be used as a csk regardless of
-        the provided type. For the key to assume its role another key of the opposite type has
-        to be present (zsk for ksk and vice-versa).
+      - Note that by default if only one CryptoKey is present it will be used as a csk regardless
+        of the provided type. For the CryptoKey to assume its role another CryptoKey
+        of the opposite type has to be present (zsk for ksk and vice-versa).
     type: str
     choices: [ 'zsk', 'ksk', 'csk']
     required: true
   active:
     description:
-      - Whether the key is active or not.
+      - Whether the CryptoKey is active or not.
     type: bool
     default: false
   published:
     description:
-      - Whether the key is published or not.
+      - Whether the CryptoKey is published or not.
     type: bool
     default: true
   dnskey:
@@ -84,11 +84,11 @@ options:
     type: str
   algorithm:
     description:
-      - Algorithm for key generation.
+      - Algorithm for CryptoKey generation.
     type: str
   bits:
     description:
-      - Size of the key in bits when O(algorithm) is a variant of RSA.
+      - Size of the CryptoKey in bits when O(algorithm) is a variant of RSA.
     type: int
     default: 4096
 
@@ -167,10 +167,10 @@ cryptokeys:
   elements: dict
   contains:
     active:
-      description: whether or not the key is active
+      description: whether or not the CryptoKey is active
       type: bool
     algorithm:
-      description: the key algorithm
+      description: the CryptoKey algorithm
       type: str
     bits:
       description: size in bits, used in dnskey record
@@ -179,20 +179,20 @@ cryptokeys:
       description: the dnskey record
       type: str
     ds:
-      description: when key is ksk or csk, used to create the DS record on the parent zone
+      description: when keytype is ksk or csk, used to create the DS record on the parent zone
       type: list
       elements: str
     flags:
       description: flags
       type: str
     id:
-      description: the id of the key
+      description: the id of the CryptoKey
       type: str
     keytype:
-      description: the type of the key
+      description: the type of the CryptoKey
       type: str
     published:
-      description: whether or not the key is published
+      description: whether or not the CryptoKey is published
       type: bool
     type:
       description: always Cryptokey
