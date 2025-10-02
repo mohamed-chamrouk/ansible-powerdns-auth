@@ -94,7 +94,7 @@
       kpfleming.powerdns_auth.cryptokey:
         <<: *common
         state: absent
-        cryptokey_id: 1
+        id: 1
       register: result
     - <<: *refresh
     - ansible.builtin.assert:
@@ -143,7 +143,7 @@
       kpfleming.powerdns_auth.cryptokey:
         <<: *common
         state: exists
-        cryptokey_id: 1
+        id: 1
       register: result
     - ansible.builtin.assert:
         quiet: true
@@ -187,7 +187,7 @@
       kpfleming.powerdns_auth.cryptokey:
         <<: *common
         state: absent
-        cryptokey_id: 1
+        id: 1
     - <<: *refresh
 
     - name: check activating key
@@ -195,14 +195,14 @@
         - kpfleming.powerdns_auth.cryptokey:
             <<: *common
             state: present
-            cryptokey_id: 2
+            id: 2
             cryptokey:
               active: true
           register: cryptokey
         - kpfleming.powerdns_auth.cryptokey:
             <<: *common
             state: "exists"
-            cryptokey_id: 2
+            id: 2
           register: result
     - <<: *refresh
     - ansible.builtin.assert:
@@ -221,7 +221,7 @@
       kpfleming.powerdns_auth.cryptokey:
         <<: *common
         state: exists
-        cryptokey_id: 100
+        id: 100
       ignore_errors: true
       register: result
     - ansible.builtin.assert:
@@ -279,7 +279,7 @@
       kpfleming.powerdns_auth.cryptokey:
         <<: *common
         state: absent
-        cryptokey_id: 100
+        id: 100
       ignore_errors: true
       register: result
     - ansible.builtin.assert:

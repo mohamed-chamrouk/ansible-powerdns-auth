@@ -71,10 +71,10 @@ Examples:
 
 ## kpfleming.powerdns_auth.rrset
 
-This module can be used to create and remove rrsets. It can also manage records in any rrset.
-Two modes are available for records management, you can either use the traditional" way :
+This module can be used to create and remove RRsets. It can also manage resource records in any RRset.
+Two modes are available for RRs management, you can either use the "standard" way :
 ```yaml
-- name: Creating a rrset of record type A
+- name: Creating an RRset of RR type A
   kpfleming.powerdns_auth.rrset:
     api_key: foo
     zone_name: zone.example.
@@ -83,9 +83,9 @@ Two modes are available for records management, you can either use the tradition
     records:
       - content: 192.168.0.1
 ```
-or use the record options from the ones supported :
+or use the resource record options from one of the supported types :
 ```yaml
-- name: Creating a rrset of record type A
+- name: Creating an RRset of RR type A
   kpfleming.powerdns_auth.rrset:
     api_key: foo
     zone_name: zone.example.
@@ -101,14 +101,14 @@ Idempotency is only supported when the `keep` option is provided.
 
 Examples:
 ```yaml
-- name: Deleting rrset
+- name: Deleting an RRset
   kpfleming.powerdns_auth.rrset:
     api_key: foo
     zone_name: zone.example.
     name: ns.zone.example.
     type: A
 
-- name: Replacing records in rrset
+- name: Replacing an RR in an RRset
   kpfleming.powerdns_auth.rrset:
     api_key: foo
     zone_name: zone.example.
@@ -116,7 +116,7 @@ Examples:
     A:
       - address: 192.168.1.1
 
-- name: Updating records in rrset
+- name: Adding an RR to an RRset
   kpfleming.powerdns_auth.rrset:
     api_key: foo
     zone_name: zone.example.
@@ -125,7 +125,7 @@ Examples:
     NS:
       - host: ns1.example.
 
-- name: Deleting records in rrset
+- name: Deleting an RR in an RRset
   kpfleming.powerdns_auth.rrset:
     api_key: foo
     zone_name: zone.example.
@@ -135,7 +135,7 @@ Examples:
     NS:
       - host: ns1.example.
 
-- name: Listing all rrsets in zone
+- name: Listing all RRsets in a given zone
   kpfleming.powerdns_auth.rrset:
     api_key: foo
     zone_name: zone.example.
@@ -194,7 +194,7 @@ Examples:
     api_key: foo
     zone_name: crypto.example.
     state: exists
-    cryptokey_id: 1
+    id: 1
 
 - name: Listing all keys in the zone
   kpfleming.powerdns_auth.cryptokey:
