@@ -214,7 +214,7 @@ class APICryptokeyWrapper(APIWrapper):
     def __init__(self, *, module, result, object_type, zone_id, cryptokey_id):
         super().__init__(module=module, result=result, object_type=object_type)
         self.zone_id = zone_id
-        self.id = cryptokey_id
+        self.cryptokey_id = cryptokey_id
 
     @api_exception_handler
     def listCryptokeys(self):  # noqa: N802
@@ -234,19 +234,19 @@ class APICryptokeyWrapper(APIWrapper):
     @api_exception_handler
     def getCryptokey(self):  # noqa: N802
         return self.raw_api.getCryptokey(
-            server_id=self.server_id, zone_id=self.zone_id, cryptokey_id=self.id
+            server_id=self.server_id, zone_id=self.zone_id, cryptokey_id=self.cryptokey_id
         ).result()
 
     @api_exception_handler
     def modifyCryptokey(self, **kwargs):  # noqa: N802
         return self.raw_api.modifyCryptokey(
-            server_id=self.server_id, zone_id=self.zone_id, cryptokey_id=self.id, **kwargs
+            server_id=self.server_id, zone_id=self.zone_id, cryptokey_id=self.cryptokey_id, **kwargs
         ).result()
 
     @api_exception_handler
     def deleteCryptokey(self):  # noqa: N802
         return self.raw_api.deleteCryptokey(
-            server_id=self.server_id, zone_id=self.zone_id, cryptokey_id=self.id
+            server_id=self.server_id, zone_id=self.zone_id, cryptokey_id=self.cryptokey_id
         ).result()
 
 
@@ -395,7 +395,9 @@ def main():
         cryptokeys_ids = [str(key["id"]) for key in existing_zone_keys]
         cryptokey_id = params["id"]
 
-        print(f"======================================{cryptokey_id}======================================")
+        print(
+            f"======================================{cryptokey_id}======================================"
+        )
 
         if cryptokey_id in cryptokeys_ids:
             api_cryptokey_client.cryptokey_id = cryptokey_id
