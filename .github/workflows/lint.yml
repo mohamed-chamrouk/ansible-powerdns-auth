@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
     - main
+    - feature-only
   schedule:
     - cron: "35 4 * * 6"
 

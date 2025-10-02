@@ -1294,7 +1294,7 @@ def main():
     # Check couldn't fit in AnsibleModule args
     type_classic = "type" in params and "records" in params
     if params["state"] == "present" and not (type_classic or rrset_record_types):
-        module.fail_json("State is present but no valid record has been provided")
+        module.fail_json("State is present but no valid RR has been provided")
 
     if rrset_record_types:
         rrset_records = [
@@ -1364,13 +1364,13 @@ def main():
                 if rrset["type"] is not None:
                     zone_struct.setdefault("rrsets", []).append(rrset)
                 else:
-                    module.fail_json("No valid record found for rrset creation.")
+                    module.fail_json("No valid record found for RRset creation.")
             elif rrset_changetype == "DELETE":
                 if existing_rrset:
                     zone_struct.setdefault("rrsets", []).append(rrset)
                 else:
                     module.fail_json(
-                        f"No matching rrset found for name: {rrset['name']} \
+                        f"No matching RRset found for name: {rrset['name']} \
                           and type: {rrset['type']}"
                     )
         elif rrset["records"] == existing_rrset["records"]:

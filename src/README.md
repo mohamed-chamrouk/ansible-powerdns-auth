@@ -144,7 +144,7 @@ Examples:
 
 ## kpfleming.powerdns_auth.cryptokey
 
-This module can create, delete, activate/deactivate, publish/unpublish a cryptokey in a zone of PowerDNS Authoritative server.
+This module can create, delete, activate/deactivate, publish/unpublish a CryptoKey in a zone of PowerDNS Authoritative server.
 
 Note that for keytype, by default if only one key is present it will be used as a csk regardless ofthe provided type. For the key to assume its role another key of the opposite type has to be present (zsk for ksk and vice-versa).
 
@@ -155,23 +155,21 @@ Examples:
     api_key: foo
     zone_name: crypto.example.
     state: present
-    cryptokey:
-      keytype: csk
-      algorithm: ed25519
-      active: true
+    keytype: csk
+    algorithm: ed25519
+    active: true
 
 - name: Import key
   kpfleming.powerdns_auth.cryptokey:
     api_key: foo
     zone_name: crypto.example.
     state: present
-    cryptokey:
-      keytype: zsk
-      dnskey: "257 3 15 lMu/7quhLeSueMcdlt3T0sxln32yhrhASCKKDB1xJOk="
-      privatekey: 'Private-key-format: v1.2\n
-                   Algorithm: 15 (ED25519)\n
-                   PrivateKey: Rnt2dv3mWMmP8bU/8koayZ4R5dWdI86zJmZ0nnjPe6Q=\n'
-      active: true
+    keytype: zsk
+    dnskey: "257 3 15 lMu/7quhLeSueMcdlt3T0sxln32yhrhASCKKDB1xJOk="
+    privatekey: 'Private-key-format: v1.2\n
+                 Algorithm: 15 (ED25519)\n
+                 PrivateKey: Rnt2dv3mWMmP8bU/8koayZ4R5dWdI86zJmZ0nnjPe6Q=\n'
+    active: true
 
 - name: Delete key
   kpfleming.powerdns_auth.cryptokey:
@@ -186,8 +184,7 @@ Examples:
     zone_name: crypto.example.
     state: present
     cryptokey_id: 1
-    cryptokey:
-      active: true
+    active: true
 
 - name: Listing a specific key
   kpfleming.powerdns_auth.cryptokey:

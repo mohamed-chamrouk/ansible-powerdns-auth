@@ -18,10 +18,10 @@ DOCUMENTATION = """
 ---
 module: powerdns_auth_cryptokey
 
-short_description: Manages a cryptokey in a zone of PowerDNS Authoritative server
+short_description: Manages a CryptoKey in a zone of PowerDNS Authoritative server
 
 description:
-  - This module can create, delete, activate/deactivate, publish/unpublish a cryptokey
+  - This module can create, delete, activate/deactivate, publish/unpublish a CryptoKey
     in a zone of PowerDNS Authoritative server.
 
 requirements:
@@ -33,11 +33,11 @@ extends_documentation_fragment:
 options:
   state:
     description:
-      - If V(present) the cryptokey will be created
-      - If V(present) and O(id) the cryptokey will be updated
-      - If V(absent) the cryptokey will be deleted
+      - If V(present) the CryptoKey will be created
+      - If V(present) and O(id) the CryptoKey will be updated
+      - If V(absent) the CryptoKey will be deleted
       - If V(exists) lists all the keys in the zone
-      - If V(exists) and O(id) returns the corresponding cryptokey
+      - If V(exists) and O(id) returns the corresponding CryptoKey
     choices: [ 'present', 'absent', 'exists' ]
     type: str
     required: false
@@ -49,7 +49,7 @@ options:
     required: true
   id:
     description:
-      - The cryptokey id.
+      - The CryptoKey id.
     type: str
   keytype:
     description:
@@ -73,8 +73,8 @@ options:
     default: true
   dnskey:
     description:
-      - The DNSKEY record for the cryptokey.
-      - Required alongside O(privatekey) for cryptokey creation if O(algorithm)
+      - The DNSKEY record for the CryptoKey.
+      - Required alongside O(privatekey) for CryptoKey creation if O(algorithm)
         is not present.
     type: str
   privatekey:
@@ -161,8 +161,8 @@ exists:
   type: bool
 cryptokeys:
   description:
-    - List of existing cryptokeys after all the changes are made.
-  returned: always except when cryptokey is returned
+    - List of existing CryptoKeys after all the changes are made.
+  returned: always
   type: list
   elements: dict
   contains:
@@ -199,6 +199,7 @@ cryptokeys:
       type: str
 """
 
+
 class APIZoneWrapper(APIWrapper):
     def __init__(self, *, module, result, object_type, zone_id):
         super().__init__(module=module, result=result, object_type=object_type)
@@ -207,6 +208,7 @@ class APIZoneWrapper(APIWrapper):
     @api_exception_handler
     def listZones(self, **kwargs):  # noqa: N802
         return self.raw_api.listZones(server_id=self.server_id, **kwargs).result()
+
 
 class APICryptokeyWrapper(APIWrapper):
     def __init__(self, *, module, result, object_type, zone_id, id):
@@ -291,8 +293,10 @@ def main():
     module = AnsibleModule(
         argument_spec=module_args,
         supports_check_mode=True,
-        required_if=(("state", "present", ["keytype", "active", "published"], True),
-                     ("state", "absent", ["id"])),
+        required_if=(
+            ("state", "present", ["keytype", "active", "published"], True),
+            ("state", "absent", ["id"]),
+        ),
     )
 
     result = {"changed": False, "cryptokeys": []}
@@ -330,13 +334,20 @@ def main():
         if result["cryptokeys"]:
             result["exists"] = True
     elif state == "present":
-        cryptokey_fields = ["keytype", "active", "published", "dnskey",
-                            "privatekey", "algorithm", "bits"]
-        cryptokey_def = {key:params[key] for key in cryptokey_fields}
+        cryptokey_fields = [
+            "keytype",
+            "active",
+            "published",
+            "dnskey",
+            "privatekey",
+            "algorithm",
+            "bits",
+        ]
+        cryptokey_def = {key: params[key] for key in cryptokey_fields}
         if params["id"] is None:
             # Creating the cryptokey
             if cryptokey_def["keytype"] is None:
-                module.fail_json(msg="Missing keytype option in cryptokey definition", **result)
+                module.fail_json(msg="Missing keytype option in CryptoKey definition", **result)
 
             generated_key_fields = ["algorithm"]
             imported_key_fields = ["dnskey", "privatekey"]
@@ -350,7 +361,7 @@ def main():
             elif cryptokey_def["privatekey"] is not None and cryptokey_def["dnskey"] is not None:
                 result_fields = common_fields + imported_key_fields
             else:
-                module.fail_json(msg="Wrong options provided for cryptokey creation", **result)
+                module.fail_json(msg="Wrong options provided for CryptoKey creation", **result)
 
             cryptokey = {field: cryptokey_def[field] for field in result_fields}
 
