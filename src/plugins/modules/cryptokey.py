@@ -232,19 +232,19 @@ class APICryptokeyWrapper(APIWrapper):
     @api_exception_handler
     def getCryptokey(self):  # noqa: N802
         return self.raw_api.getCryptokey(
-            server_id=self.server_id, zone_id=self.zone_id, id=self.id
+            server_id=self.server_id, zone_id=self.zone_id, cryptokey_id=self.id
         ).result()
 
     @api_exception_handler
     def modifyCryptokey(self, **kwargs):  # noqa: N802
         return self.raw_api.modifyCryptokey(
-            server_id=self.server_id, zone_id=self.zone_id, id=self.id, **kwargs
+            server_id=self.server_id, zone_id=self.zone_id, cryptokey_id=self.id, **kwargs
         ).result()
 
     @api_exception_handler
     def deleteCryptokey(self):  # noqa: N802
         return self.raw_api.deleteCryptokey(
-            server_id=self.server_id, zone_id=self.zone_id, id=self.id
+            server_id=self.server_id, zone_id=self.zone_id, cryptokey_id=self.id
         ).result()
 
 
