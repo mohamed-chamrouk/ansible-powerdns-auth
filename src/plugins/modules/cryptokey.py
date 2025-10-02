@@ -211,10 +211,10 @@ class APIZoneWrapper(APIWrapper):
 
 
 class APICryptokeyWrapper(APIWrapper):
-    def __init__(self, *, module, result, object_type, zone_id, id):
+    def __init__(self, *, module, result, object_type, zone_id, cryptokey_id):
         super().__init__(module=module, result=result, object_type=object_type)
         self.zone_id = zone_id
-        self.id = id
+        self.id = cryptokey_id
 
     @api_exception_handler
     def listCryptokeys(self):  # noqa: N802
@@ -317,7 +317,11 @@ def main():
     # get the zone_id from the zone_name
     zone_id = partial_zone_info[0]["id"]
     api_cryptokey_client = APICryptokeyWrapper(
-        module=module, result=result, object_type="zonecryptokey", zone_id=zone_id, id=None
+        module=module,
+        result=result,
+        object_type="zonecryptokey",
+        zone_id=zone_id,
+        cryptokey_id=None,
     )
 
     existing_zone_keys = api_cryptokey_client.listCryptokeys()
@@ -325,7 +329,7 @@ def main():
     if state == "exists":
         result["exists"] = False
         if params["id"] is not None:
-            api_cryptokey_client.id = params["id"]
+            api_cryptokey_client.cryptokey_id = params["id"]
             result["cryptokeys"] = [api_cryptokey_client.getCryptokey()]
             # nonexistent key id is handled by the API error handler
         else:
@@ -382,7 +386,7 @@ def main():
                     **result,
                 )
 
-            api_cryptokey_client.id = params["id"]
+            api_cryptokey_client.cryptokey_id = params["id"]
             api_cryptokey_client.modifyCryptokey(cryptokey=cryptokey)
 
         result["changed"] = True
@@ -392,7 +396,7 @@ def main():
         cryptokey_id = params["id"]
 
         if cryptokey_id in cryptokeys_ids:
-            api_cryptokey_client.id = cryptokey_id
+            api_cryptokey_client.cryptokey_id = cryptokey_id
             api_cryptokey_client.deleteCryptokey()
         else:
             module.fail_json(
