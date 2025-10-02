@@ -380,7 +380,7 @@ def main():
         cryptokeys_ids = [str(key["id"]) for key in existing_zone_keys]
         cryptokey_id = params["id"]
 
-        if id in cryptokeys_ids:
+        if cryptokey_id in cryptokeys_ids:
             api_cryptokey_client.id = cryptokey_id
             api_cryptokey_client.deleteCryptokey()
         else:
