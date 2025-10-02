@@ -1260,6 +1260,14 @@ def main():
         "changed": False,
     }
 
+    # create an object to proxy the raw API object
+    # and carry the server_id into all API calls
+    # automatically, along with handling
+    # predictable exceptions
+    api_client = APIZoneRRSetWrapper(
+        module=module, result=result, object_type="zones", zone_id=None
+    )
+
     partial_zone_info = api_client.listZones(zone=zone_name)
 
     if len(partial_zone_info) == 0:
@@ -1267,15 +1275,7 @@ def main():
 
     # get the zone_id from the zone_name
     zone_id = partial_zone_info[0]["id"]
-
-    # create an object to proxy the raw API object
-    # and carry the server_id into all API calls
-    # automatically, along with handling
-    # predictable exceptions
-    api_client = APIZoneRRSetWrapper(
-        module=module, result=result, object_type="zones", zone_id=zone_id
-    )
-
+    api_client.zone_id = zone_id
     params = module.params
 
     result.update({"name": params["name"]})
