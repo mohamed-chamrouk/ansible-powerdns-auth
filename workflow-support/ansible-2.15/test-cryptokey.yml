@@ -254,7 +254,7 @@
         quiet: true
         that:
           - result.failed
-          - result.msg == "Wrong options provided for CryptoKey creation"
+          - "result.msg == 'parameters are required together: dnskey, privatekey'"
 
     - name: check missing keytype
       kpfleming.powerdns_auth.cryptokey:
