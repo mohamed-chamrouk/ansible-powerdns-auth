@@ -300,7 +300,6 @@ def main():
         required_if=(
             ("state", "present", ["keytype", "active", "published"], True),
             ("state", "absent", ["id"]),
-            ("state", "exists", ["id"]),
             ("alogirthm", "RSASHA1", ["bits"]),
             ("alogirthm", "RSASHA256", ["bits"]),
             ("alogirthm", "RSASHA512", ["bits"]),
