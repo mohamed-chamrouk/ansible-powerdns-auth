@@ -284,13 +284,13 @@ def main():
         "keytype": {"type": "str", "required": False, "choices": ["zsk", "ksk", "csk"]},
         "active": {"type": "bool", "default": False},
         "published": {"type": "bool", "default": True},
-        "dnskey": {
+        "algorithm": {
           "type": "str",
           "required": False,
           "choices": ["RSASHA1", "RSASHA256", "RSASHA512", "ECDSA", "ed25519", "ed"]
         },
         "privatekey": {"type": "str", "required": False},
-        "algorithm": {"type": "str", "required": False},
+        "dnskey": {"type": "str", "required": False},
         "bits": {"type": "int", "default": 4096},
     }
 
