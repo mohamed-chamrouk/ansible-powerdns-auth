@@ -284,7 +284,11 @@ def main():
         "keytype": {"type": "str", "required": False, "choices": ["zsk", "ksk", "csk"]},
         "active": {"type": "bool", "default": False},
         "published": {"type": "bool", "default": True},
-        "dnskey": {"type": "str", "required": False},
+        "dnskey": {
+          "type": "str",
+          "required": False,
+          "choices": ["RSASHA1", "RSASHA256", "RSASHA512", "ECDSA", "ed25519", "ed"]
+        },
         "privatekey": {"type": "str", "required": False},
         "algorithm": {"type": "str", "required": False},
         "bits": {"type": "int", "default": 4096},
@@ -296,7 +300,17 @@ def main():
         required_if=(
             ("state", "present", ["keytype", "active", "published"], True),
             ("state", "absent", ["id"]),
+            ("state", "exists", ["id"]),
+            ("alogirthm", "RSASHA1", ["bits"]),
+            ("alogirthm", "RSASHA256", ["bits"]),
+            ("alogirthm", "RSASHA512", ["bits"]),
         ),
+        required_together=[
+            ("dnskey", "privatekey"),
+        ],
+        mutually_exclusive=[
+          ("dnskey", "algorithm"),
+        ]
     )
 
     result = {"changed": False, "cryptokeys": []}
