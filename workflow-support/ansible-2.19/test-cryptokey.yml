@@ -38,8 +38,6 @@
               type: A
               records:
                 - content: 192.168.1.1
-        metadata:
-          api_rectify: true
       register: result
 
     - ansible.builtin.assert:
@@ -77,7 +75,7 @@
         algorithm: ed25519
         active: true
       register: result
-    # - <<: *refresh
+    - <<: *refresh
     - ansible.builtin.assert:
         quiet: true
         that:
@@ -99,7 +97,7 @@
         state: absent
         id: 1
       register: result
-    # - <<: *refresh
+    - <<: *refresh
     - ansible.builtin.assert:
         quiet: true
         that:
@@ -120,9 +118,9 @@
         privatekey: "Private-key-format: v1.2\nAlgorithm: 15 (ED25519)\nPrivateKey: Rnt2dv3mWMmP8bU/8koayZ4R5dWdI86zJmZ0nnjPe6Q=\n"
         active: true
       register: result
-    # - <<: *refresh
-    # For the following test : by default, when creating a Cryptokey and it's the only one present
-    # powerdns will use it as a csk regardless of the keytype passed for its creation
+    - <<: *refresh
+    # For the following test : by default, when creating a unique CryptoKey in a zone,
+    # powerdns will use it as a csk regardless of the keytype passed for its creation.
     # Once another CryptoKey is present of the opposite type or a csk, powerdns will use
     # the two CryptoKeys as a ksk/zsk pair.
     - ansible.builtin.assert:
@@ -188,7 +186,7 @@
         <<: *common
         state: absent
         id: 1
-    # - <<: *refresh
+    - <<: *refresh
 
     - name: check activating CryptoKey
       block:
@@ -203,7 +201,7 @@
             state: "exists"
             id: 2
           register: result
-    # - <<: *refresh
+    - <<: *refresh
     - ansible.builtin.assert:
         quiet: true
         that:
