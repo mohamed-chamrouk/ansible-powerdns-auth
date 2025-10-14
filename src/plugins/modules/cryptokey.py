@@ -8,7 +8,7 @@ import sys
 from ansible.module_utils.basic import AnsibleModule
 
 from ..module_utils.api_module_args import API_MODULE_ARGS
-from ..module_utils.api_wrapper import APIZoneWrapper, APICryptokeyWrapper
+from ..module_utils.api_wrapper import APICryptokeyWrapper, APIZoneWrapper
 
 assert sys.version_info >= (3, 9), "This module requires Python 3.9 or newer."
 
