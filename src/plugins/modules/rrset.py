@@ -1217,9 +1217,7 @@ def main():
         "changed": False,
     }
 
-    api_client = APIZoneWrapper(
-        module=module, result=result, object_type="zones", zone_id=None
-    )
+    api_client = APIZoneWrapper(module=module, result=result, object_type="zones", zone_id=None)
 
     partial_zone_info = api_client.listZones(zone=zone_name)
 
